@@ -1,0 +1,232 @@
+
+                            Fourmilab Tesseract
+                              Development Log
+
+2022 August 22
+
+With initial operating capability achieved yesterday, it's time to
+start logging changes as we proceed toward release.
+
+Put together a first draft of the Tesseract User Guide.  This is in
+rough form, but will allow testing of delivery via the Help command.
+
+Updated the Hat script, which configures the generic object for use
+as a wearable hat, to take advantage of perspective projection, axis
+colouring, and use a better mix of rotation modes by default.
+
+Added the ability to display the 5-cell (pentachoron) and 16-cell
+(hexadecachoron) polytopes as well as the 8-cell tesseract.  The object
+is selected with a "Set model" command, which accepts either the
+numerical cell designation or the name for the object.  The Status
+command now shows the chosen model and its number of vertices and
+edges.
+
+2022 August 23
+
+Added the ability for avatars to sit individually on any edge of the
+displayed object.  The Edge script in each edge places a sit target at
+the midpoint of the edge with an orientation so the avatar looks along
+the edge.  When an avatar sits on the edge, its key is saved and every
+time the edge moves the avatar's position and rotation are updated to
+maintain the relative position with respect to the edge. This allows
+any number of avatars to simultaneously ride different edges, although
+if you have too many, you may encounter lag as the simulation and/or
+viewer cannot keep up with all of the action.
+
+2022 August 24
+
+To reduce the amount of busywork in updating the scripts in all 32 Edge
+objects, I created an Edge Factory which rezzes the specified number of
+edges from a prototype in its inventory.  You can then unlink the
+deployer from the 4D model, delete the now-disconnected edges (which
+remain linked together, so it's easy, then box select the newly-created
+edges, add the deployer to the selection, link everything together, and
+Boot the deployer and you're up and running with the new script in the
+edges.
+
+Made images for the Marketplace listing.
+
+2022 August 25
+
+Created initial draft of Marketplace listing.
+
+Added the ability to run a script named "Script: Touch" by touching
+the model.  You shouldn't use such a script if any of your other
+scripts use the "Script pause touch" feature.
+
+The Rotate command specified incorrect plane indices to matrot4d()
+for the "xz" case.  Fixed.
+
+Made a first cut at "Script: Demonstration" which will be run by
+touch in the standard delivered version and used in the YouTube
+demonstration video.
+
+2022 August 26
+
+Added a "Set name" command to set the object name to the string that
+follows, which may contain upper and lower case and spaces. This will
+allow the "Hat" script to change the object name to "Fourmilab
+Tesseract Hat" when automatically reconfiguring the generic object.
+
+Added a "Rotate clear" command which clears the animation transform to
+the identity matrix while leaving the model in its current orientation.
+
+Integrated the first cut of the Menu Processor.  This is a separate
+script, invoked by a main script, which provides programmable menus
+defined by Menu commands from chat or (usually) a script.  Tools to
+synchronise suspension of execution between scripts and menus to wait
+for command completion are provided, but I'm not sure scripts and menus
+play nicely with one another in all cases yet.  I will defer
+adding this to the User Guide until I've done more testing to make
+sure it's working correctly.
+
+2022 August 27
+
+Completed a major redesign of the Menu Processor's interaction with
+the Script Processor.  This eliminates almost all special support
+for the Menu Processor in the client script and should fix ambiguities
+and race conditions between scripts and menus.
+
+Commands submitted by menus are now treated precisely the same as
+input from script files, with the only difference that they come
+from the menu definition in memory instead of from a notecard.  When
+a menu is shown and the user clicks a button, the Menu Processor sends
+a LM_MP_SELECTION message to the Script Processor which caches the
+commands and enqueues a special "Menu: Menuname:Buttonno" item as the
+name of the script.  When this executes, the commands are taken from
+the cache instead of retrieved from the notecard in the inventory.
+This eliminates all of the special retrieval of menu commands from
+the client and unifies handling of scripts and menus.  There is no
+longer any need for distinguishing menus that wait and those that do
+not, and the specification has been removed.
+
+Added information to the Script and Menu Processor Status output to
+show menus defined and in the process of being run.
+
+2022 August 28
+
+Further revised the interaction between menus and scripts.  By default,
+the Menu show command suspends execution of a script in which it
+appears.  The script is resumed when a selection is made from the
+menu or if the menu times out without a selection after 60 seconds.
+If the word "continue" is added to the end of the Menu show command
+after the script name, this will not be done, and the script will
+continue to execute while the menu is displayed.
+
+As we all know, menu dialogue support in Second Life is rather tacky,
+with no way for a script to cancel a displayed dialogue, which means
+that if it times out, it remains on the screen but doesn't respond
+to user clicks.  To help scripts cope with this a little better, I
+added the ability to define a button named "*Timeout*" in a menu.
+This button is not displayed in the menu, but if the menu times out,
+the commands associated with the pseudo-button will be executed,
+allowing the script to take alternative actions rather than just
+blithering on unaware the user didn't respond.
+
+Renamed the Edge Factory user guide to "Fourmilab Tesseract Edge
+Factory User Guide" and made the Help command in the edge factory give
+it to the requester.
+
+Removed the llResetScript() and on_rez() event handler.  It was causing
+the Hat configuration to reset to the base configuration when it was
+attached to an avatar from the inventory.
+
+Updated the perspective projection in updateProj() to use true 3D
+distance from the View from point to the 4D point in the model rather
+than just the distance along the W axis.  This allows completely
+general values in View from rather than just points on the W axis.
+
+2022 August 29
+
+In scripts where buttons re-invoked the same script in order to act as
+a persistent control panel, if the same button was pressed more than
+once in a sequence, the latest press would delete the definition of the
+earlier press as its pseudo-script name was identical.  This would
+cause a warning message when unrolling the menu stack the definition of
+a completed menu was missing.  In addition, if that menu contained
+additional commands, they would not be executed.  I modified Menu
+Processor to pass a uniqueness number, incremented with each click
+since script reset, to disambiguate multiple clicks of the same button
+being executed by the Script Processor.
+
+Added logic similar to Lisp tail recursion optimisation to
+fetchNextLine() in Script Processor to prevent unbounded growth of the
+script source stack when running menus where buttons reinvoke the
+script as their last command when pressed.  This is described in the
+following comment.
+    A common idiom in menu construction is a menu whose buttons perform
+    some function and then immediately re-display the menu to permit
+    other functions.  This would normally result in a stack of menus,
+    one for each button press, in ncQueue, all of which will be unwound
+    when the menu exits without re-invoking itself.  To avoid this,
+    which might lead to a memory exhaustion crash in extreme cases, we
+    perform a trick like "tail recursion optimisation" in Lisp, where
+    we check if we've just returned the last command from the menu
+    button and, if so, dispose of the menu script and pop the source
+    stack here rather than waiting for the next request for a line to
+    discover we're at EOF.
+
+Replaced the code that projects the 4D model into 3D space, which was
+derived from my hacked together 1994 Silicon Graphics version with
+proper 4D linear algebra as described in Steven Richard Hollasch's 1991
+thesis "Four-Space Visualization of 4D Objects":
+    https://hollasch.github.io/ray4/Four-Space_Visualization_of_4D_Objects.html
+As far as I can tell, my code produced precisely the same results as
+the code that replaced it, but the new code is much easier to
+understand and flexible in supporting more complex projections, such as
+changing the default up and over vectors in the 4D to 3D projection.
+
+The revision to projection from 4D to 3D will require revisiting the
+defaults for viewing parameters and the settings in some of the
+demonstration and utility scripts.  I will defer this until I'm sure
+the new projection code is stable.
+
+2022 August 30
+
+Added the 24-cell (icositetrachoron) model to the Models script.  This
+model has 96 edges, and hence will not work with the standard
+configuration with 32 edges but, if you build a "Mega" version with
+96 models (and hence a land impact of 97), you can select this model.
+At the moment, if you select this model from a build with 32 edges, it
+will simply truncate at the number of available edges.  I will add
+a warning for attempts to select this model when there aren't enough
+edges to display it.
+
+2022 August 31
+
+Well, it was inevitable.  All of these zowie new features pushed the
+main script near the brink of memory exhaustion and supporting a model
+with 96 edges kicked it over.  I restructured the main script into two
+scripts, adding a new script named Projections
+(scripts/projections.lsl) in the Git repository) which manages the
+model, transforming it in the 4D space, and projecting it into 3D,
+while the main script, Tesseract (scripts/tesseract.lsl) handles
+interaction with the user, scripts, and menus, including parsing and
+executing all commands.  This separation, of course, requires some back
+and forthing to pass settings to the Projections script and script
+resume commands back to the main script, but there's still a big win in
+terms of balancing memory usage.  The memory usage of our scripts
+immediately after a Boot with the default tesseract model is now:
+    Tesseract           54%
+    Projections         56%
+    Script processor    49%
+    Menu processor      42%
+
+2022 September 1
+
+Changed the texture in the Edge object in the inventory of the Edge
+Factory from "Full Bright" to regular shading, as we've decided that
+looks better in the models we create from the edges.  We've been
+overriding this once the edges are linked with the controller, but it's
+better they be right from the start lest we forget.
+
+Added a check when the user tries to set the model to the 24-cell
+that we're configured with 96 or more edges.  If not, the Set model
+command is rejected with a message advising to use the "Mega" version.
+
+To further simplify maintaining the regular and "Mega" version of the
+object in parallel, I added a developer-only command, "Set mega off",
+which unlinks all edges with numbers greater than 32.  This means we
+can maintain the master model in the Mega configuration and, before
+shipping, make a copy, prune the extra edges, and save it as the
+standard version.

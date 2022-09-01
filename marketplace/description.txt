@@ -1,0 +1,19 @@
+Fourmilab Tesseract provides models of a four-dimensional hypercube and two other four-dimensional regular polytopes (the 5- and 16-cell) which are projected into the three-dimensional space of Second Life.  It responds to commands sent via chat or from a notecard script to allow rotating or spinning the object around any plane or planes in the four dimensional space, with the three-dimensional wire frame model immediately updated, allowing one to develop an intuitive sense for objects in four dimensions.  Projection from four-dimensional space to three-dimensional space can be either parallel (orthographic) or prespective. The model may be rezzed in the world or attached to an avatar (usually worn as a hat).
+
+Land Impact and Permissions
+
+When worn as an avatar accessory, Fourmilab Tesseract has no land impact or creation permissions required.  When rezzed as an object, it requires permission to create objects and has a land impact of 33.
+
+Development Kit
+
+Fourmilab Tesseract is delivered including a development kit containing all of the object components, models, textures, scripts, and documents used in the objects.  All items including scripts, have “full permissions” (copy, modify, and transfer), so that you can use them as the basis for your own development projects and/or share them with other users in Second Life.
+
+Source code for this project is maintained on and available from the GitHub repository:
+    https://github.com/Fourmilab/tesseract
+
+License
+
+This product (software, documents, images, and original models) is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+    http://creativecommons.org/licenses/by-sa/4.0/
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+You are free to copy and redistribute this material in any medium or format, and to remix, transform, and build upon the material for any purpose, including commercially.  You must give credit, provide a link to the license, and indicate if changes were made.  If you remix, transform, or build upon this material, you must distribute your contributions under the same license as the original.
