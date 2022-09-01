@@ -45,7 +45,6 @@
     integer trace = FALSE;              // Trace operation ?
     integer hide = FALSE;               // Hide deployer while running ?
     integer running = FALSE;            // Are we running an animation ?
-//    float runEndTime = 0;               // Time to complete current run
     float timerTick = 0.05;             // Spin animation timer interval
 
     float globalScale = 1;              // Scale of projected object
@@ -64,23 +63,6 @@
     string helpFileName = "Fourmilab Tesseract User Guide";
 
     integer whichModel = 8;             // Initial model to display
-//    string modelName;                   // Model name
-//    list edgeLink;                      // Edge link numbers
-//    integer nLinks;                     // Number of edges in inventory
-//    list vertex;                        // Unit tesseract vertex array
-//    integer nVertex;                    // Number of vertices
-//    integer nEdges;                     // Number of edges in current model
-//    list edgePath;                      // Edges defined as pairs of vertex indices
-//    list edgeAxis;                      // Local axis along which this 4D edge runs
-//    list axisColour = [                 // Colours for edges based on axis
-//        < 1, 0, 0 >,                    //      0   X   Red
-//        < 0, 0.75, 0 >,                 //      1   Y   Green
-//        < 0, 0, 1 >,                    //      2   Z   Blue
-//        < 1, 0.64706, 0 >               //      3   W   Orange
-//    ];
-
-//    list projMatrix;                    // Current projection matrix
-//    list animMatrix;                    // Matrix applied on each animation step
 
     //  Script processing
 
@@ -100,16 +82,12 @@
     integer LM_SP_ERROR = 58;           // Requested operation failed
     integer LM_SP_SETTINGS = 59;        // Set operating modes
 
-//    //  Edge messages
-//    integer LM_ED_POS = 91;             // Set endpoint positions
-//    integer LM_ED_PROP = 92;            // Set display properties
-
     //  Command processor messages
 
     integer LM_CP_COMMAND = 223;        // Process command
 
     //  Menu Processor messages
-//    integer LM_MP_INIT = 270;       // Initialise
+//  integer LM_MP_INIT = 270;           // Initialise
     integer LM_MP_RESET = 271;          // Reset script
     integer LM_MP_STAT = 272;           // Print status
     integer LM_MP_SETTINGS = 273;       // Set operating modes
@@ -149,355 +127,6 @@
             }
         }
     }
-
-/*
-    //  matident  --  Return a 4x4 identity matrix
-
-    list matident() {
-        return [ < 1, 0, 0, 0 >,
-                 < 0, 1, 0, 0 >,
-                 < 0, 0, 1, 0 >,
-                 < 0, 0, 0, 1 > ];
-    }
-
-    //  matload  --  Extract an element from a matrix
-
-    float matload(list m, integer i, integer k) {
-        rotation r = llList2Rot(m, i);
-        if (k == 0) {
-            return r.x;
-        } else if (k == 1) {
-            return r.y;
-        } else if (k == 2) {
-            return r.z;
-        } else {
-            return r.s;
-        }
-    }
-
-    //  matstore  -- Update an element in a matrix
-
-    list matstore(list m, integer i, integer k, float v) {
-        rotation r = llList2Rot(m, i);
-
-        if (k == 0) {
-            r.x = v;
-        } else if (k == 1) {
-            r.y = v;
-        } else if (k == 2) {
-            r.z = v;
-        } else {
-            r.s = v;
-        }
-
-        return llListReplaceList(m, [ r ], i, i);
-    }
-
-    //  matmul  --  Multiply two 4x4 matrices
-
-    list matmul(list a, list b) {
-        integer i;
-        integer j;
-        integer k;
-        list o = matident();
-
-        for (i = 0; i < 4; i++) {
-            for (k = 0; k < 4; k++) {
-                float sum = 0;
-                for (j = 0; j < 4; j++) {
-                    sum += matload(a, i, j) * matload(b, j, k);
-                }
-                o = matstore(o, i, k, sum);
-            }
-        }
-        return o;
-    }
-
-    //  matprint  --  Convert a matrix to a printable string
-
-    string matprint(list m) {
-        string s = "\n" +
-            "| " + ((string) llList2Rot(m, 0)) + " |\n" +
-            "| " + ((string) llList2Rot(m, 1)) + " |\n" +
-            "| " + ((string) llList2Rot(m, 2)) + " |\n" +
-            "| " + ((string) llList2Rot(m, 3)) + " |\n";
-
-        return s;
-    }
-*/
-
-    /*  MATROT4D  --  Build four dimensional rotation matrix.  theta is the
-                      rotation angle, in radians.  i is the selector for
-                      the first plane being rotated about, and j selects
-                      the second plane of rotation.  i and j are in the
-                      range from 1 to 3, and only the following combinations
-                      are permitted:
-
-                        I     J
-                       ---   ---
-                        1     2
-                        1     3
-                        1     4
-                        2     3
-                        2     4
-                        3     4
-    */
-/*
-    list matrot4d(float theta, integer i, integer j) {
-            float a;
-            float b;
-            list m;
-
-            if ((i < 1) || (i > 3) ||
-                (j <= i) || (j > 4)) {
-               tawk("Invalid rotation plane arguments (I, J) passed\n" +
-                    "to matrot4d.  I = " + (string) i +
-                    ", J = " + (string) j);
-            }
-
-            b = llSin(theta);
-            a = llCos(theta);
-
-            m = matident();
-            m = matstore(m, i - 1, i - 1, a);
-            m = matstore(m, j - 1, j - 1, a);
-            m = matstore(m, j - 1, i - 1, -b);
-            m = matstore(m, i - 1, j - 1, b);
-            return m;
-    }
-
-    //  vecscal4d  --  Scale a 4D vector by a constant
-
-    rotation vecscal4d(rotation v, float s) {
-        return <v.x * s, v.y * s, v.z * s, v.s * s>;
-    }
-
-    //  vecxmat  --  Multiply a vector by a matrix
-
-    rotation vecxmat(rotation v, list m) {
-        integer i;
-        float sum;
-        rotation vo;
-
-        for (i = 0; i < 4; i++) {
-            sum = v.x * matload(m, 0, i) +
-                  v.y * matload(m, 1, i) +
-                  v.z * matload(m, 2, i) +
-                  v.s * matload(m, 3, i);
-            if (i == 0) {
-                vo.x = sum;
-            } else if (i == 1) {
-                vo.y = sum;
-            } else if (i == 2) {
-                vo.z = sum;
-            } else {
-                vo.s = sum;
-            }
-        }
-        return vo;
-    }
-*/
-
-    //  updateEdgeProps  -- Update properties of wireframe edges
-
-//    updateEdgeProps() {
-//        integer edgeIndex;
-//        for (edgeIndex = 0; edgeIndex < nEdges; edgeIndex++) {
-//            vector ec = edgeColour;
-//            if (ec.x == -1) {
-//            /*  If using "axes" colour, individually set the edges
-//                to the color associated with that axis in the
-//                un-rotated 4D model.  The XYZ axes are coloured as
-//                in Second Life, and the W axis is orange.  */
-//                ec = llList2Vector(axisColour, llList2Integer(edgeAxis, edgeIndex));
-//            }
-//            integer linkno = llList2Integer(edgeLink, edgeIndex);
-//            llMessageLinked(linkno,
-//                    LM_ED_PROP,
-//                    llList2Json(JSON_ARRAY, [ edgeIndex + 1,
-//                        ec, edgeAlpha,
-//                        edgeDiam ]), whoDat);
-//        }
-//
-//        //  If there are unused edges, hide them.
-//        for (edgeIndex = nEdges; edgeIndex < nLinks; edgeIndex++) {
-//             llSetLinkAlpha(llList2Integer(edgeLink, edgeIndex), 0, ALL_SIDES);
-//        }
-//    }
-
-/*
-    //  dot4d  --  Compute dot product of two 4D vectors
-
-    float dot4d(rotation v1, rotation v2) {
-        return (v1.x * v2.x) + (v1.y * v2.y) +
-               (v1.z * v2.z) + (v1.s * v2.s);
-    }
-*/
-
-    /*  cross4d  --  Compute cross-product analogue of two
-                     4D vectors.  This computation is unrelated
-                     to the cross product of vectors in 2D and
-                     3D but is used for the same purpose:
-                     finding the 4D vector which is orthogonal
-                     to three linearly independent 4-vectors
-                     U, V, and W.  */
-/*
-    rotation cross4d(rotation U, rotation V, rotation W) {
-        rotation cx;
-
-        float A = (V.x * W.y) - (V.y * W.x);
-        float B = (V.x * W.z) - (V.z * W.x);
-        float C = (V.x * W.s) - (V.s * W.x);
-        float D = (V.y * W.z) - (V.z * W.y);
-        float E = (V.y * W.s) - (V.s * W.y);
-        float F = (V.z * W.s) - (V.s * W.z);
-
-        cx.x =   (U.y * F) - (U.z * E) + (U.s * D);
-        cx.y = - (U.x * F) + (U.z * C) - (U.s * B);
-        cx.z =   (U.x * E) + (U.y * C) + (U.s * A);
-        cx.s = - (U.x * D) + (U.y * B) - (U.z * A);
-
-        return cx;
-    }
-*/
-
-    /*  viewMatrix4Dto3D  --  Compute 4D to 3D viewing matrix.
-                              This function takes a 4D viewpoint,
-                              from, and a look-at point, to, and
-                              two orthogonal 4-vectors, up and over,
-                              which define the orientation of the
-                              viewer in four-dimensional space.
-                              The result is a 4x4 transformation
-                              matrix to viewing co-ordinates.  */
-/*
-    list viewMatrix4Dto3D(rotation from, rotation to,
-                          rotation up, rotation over) {
-        rotation Wd = to - from;
-        float norm = norm4d(Wd);
-        if (norm == 0) {
-            tawk("View from and to points are coincident.");
-            return [ ];
-        }
-        Wd = vecscal4d(Wd, 1 / norm);
-
-        rotation Wa = cross4d(up, over, Wd);
-        norm = norm4d(Wa);
-        if (norm == 0) {
-            tawk("Invalid up vector");
-            return [ ];
-        }
-        Wa = vecscal4d(Wa, 1 / norm);
-
-        rotation Wb = cross4d(over, Wd, Wa);
-        norm = norm4d(Wb);
-        if (norm == 0) {
-            tawk("Invalid over vector");
-            return [ ];
-        }
-        Wb = vecscal4d(Wb, norm);
-
-        rotation Wc = cross4d(Wd, Wa, Wb);
-
-        return [ Wa, Wb, Wc, Wd ];
-    }
-
-    //  project4Dto3D  --  Project 4D vertex to 3D space
-
-    vector project4Dto3D(rotation v, integer persp,
-        float radius, rotation from, float vangle, list vmat) {
-        float s;
-        float t;
-
-        if (persp) {
-            t = 1 / llTan(vangle / 2);
-        } else {            // Parallel
-            s = 1 / radius;
-        }
-        v -= from;
-
-        if (persp) {
-            s = t / dot4d(v, llList2Rot(vmat, 3));
-        }
-        vector v3d = <
-                        s * dot4d(v, llList2Rot(vmat, 0)),
-                        s * dot4d(v, llList2Rot(vmat, 1)),
-                        s * dot4d(v, llList2Rot(vmat, 2))
-                     >;
-        return v3d;
-    }
-    //  norm4d  -- Compute norm of 4d vector
-
-    float norm4d(rotation v) {
-        return llSqrt(dot4d(v, v));
-    }
-
-    //  updateProj  --  Update projection of 4D object to 3D model
-
-    updateProj() {
-        list pvertex;
-        integer i;
-        integer j;
-        integer k;
-
-        list projTo3d = viewMatrix4Dto3D(
-                            viewFrom,                   // From
-                            < 0, 0, 0, 0 >,             // To
-                            < 0, 1, 0, 0 >,             // Up
-                            < 0, 0, 1, 0 >);            // Over
-        for (i = 0; i < nVertex; i++) {
-
-            //  Position of transformed vertex in 4D space
-            rotation vtx = vecxmat(llList2Rot(vertex, i), projMatrix);
-
-            vector prv = project4Dto3D(vtx,
-                perspective,
-                1.0,                // Radius
-                viewFrom,           // From 4D point
-                viewAngle,          // View angle
-                projTo3d);          // Projection matrix 4D to 3D
-            pvertex += < prv.x, prv.y, prv.z, 0 >;
-        }
-
-        //  Draw wire frame representation of object
-
-        for (i = 0; i < nEdges; i++) {
-            j = llList2Integer(edgePath, i);
-            k = j / 100;
-            j = j % 100;
-            if (i < nLinks) {
-                /*  You might think that sending link messages to
-                    each individual edge and having them separately
-                    move themselves is inefficient compared to
-                    batching everything up into one
-                    llSetLinkPrimitiveParamsFast() call using the
-                    PRIM_LINK_TARGET trick to address the links.
-
-                    But you'd be wrong.  That runs much slower and
-                    results in herky-jerky motion of the edges.  Making
-                    separate calls for each edge here is no better.
-                    My guess is that having the edges update themselves
-                    allows the updates to run in parallel while doing
-                    all the updates within the main script forces them
-                    to be executed serially.
-
-                llMessageLinked(llList2Integer(edgeLink, i), LM_ED_POS,
-                llList2Json(JSON_ARRAY, [ i + 1,
-                    (< matload(pvertex, j, 0),
-                       matload(pvertex, j, 1),
-                       matload(pvertex, j, 2) > * globalScale) + globalPos,
-                    (< matload(pvertex, k, 0),
-                       matload(pvertex, k, 1),
-                       matload(pvertex, k, 2) > * globalScale) + globalPos ]),
-                    whoDat);
-            }
-        }
-    }
-
-    //  updateOrientation  --  Update orientation for one animation step
-    updateOrientation() {
-        projMatrix = matmul(projMatrix, animMatrix);
-    }
-*/
 
     //  sendSettings  --  Send settings to other scripts
 
@@ -744,6 +373,7 @@
         /*  Channel n               Change command channel.  Note that
                                     the channel change is lost on a
                                     script reset.  */
+
         } else if (abbrP(command, "ch")) {
             integer newch = (integer) sparam;
             if ((newch < 2)) {
@@ -784,12 +414,8 @@
 
         } else if (abbrP(command, "ro")) {
             if (abbrP(sparam, "cl")) {
-//                animMatrix = matident();
                 llMessageLinked(LINK_THIS, LM_PR_MTXRESET, "2", whoDat);
             } else if (abbrP(sparam, "re")) {
-//                projMatrix = matident();
-//                animMatrix = matident();
-//                updateProj();
                 llMessageLinked(LINK_THIS, LM_PR_MTXRESET, "3", whoDat);
                 llMessageLinked(LINK_THIS, LM_PR_UPDPROJ, "", whoDat);
             } else {
@@ -798,17 +424,6 @@
                                 "zw", 3, 4 ];
                 integer pindex = llListFindList(planes, [ sparam ]);
                 if (pindex >= 0) {
-/*
-                    list rotmat = matrot4d(llList2Float(args, 2) * DEG_TO_RAD,
-                        llList2Integer(planes, pindex + 1),
-                        llList2Integer(planes, pindex + 2));
-                    if ((argn > 3) && abbrP(llList2String(args, 3), "an")) {
-                        animMatrix = matmul(animMatrix, rotmat);
-                    } else {
-                        projMatrix = matmul(projMatrix, rotmat);
-                        updateProj();
-                    }
-*/
                     integer isAnim = (argn > 3) &&
                             abbrP(llList2String(args, 3), "an");
                     llMessageLinked(LINK_THIS, LM_PR_ROTATE,
@@ -835,18 +450,6 @@
                 sparam = "on";
             }
             running = onOff(sparam);
-/*
-            if (running) {
-                llSetTimerEvent(timerTick);
-                scriptSuspend = TRUE;
-            } else {
-                llSetTimerEvent(0);
-                scriptResume();
-            }
-            if (hide == 2) {
-                llSetAlpha(1 - running, ALL_SIDES);
-            }
-*/
             if (running) {
                 scriptSuspend = TRUE;
             }
@@ -875,13 +478,11 @@
                         edgeAlpha = llList2Float(args, 3);
                     }
                     sendProjSettings(2);
-//                    updateEdgeProps();
 
                 //  Set diameter n
                 } else if (abbrP(sparam, "di")) {
                     edgeDiam = (float) svalue;
                     sendProjSettings(2);
-//                    updateEdgeProps();
 
                 //  Set echo on/off
 
@@ -894,12 +495,16 @@
                 } else if (abbrP(sparam, "hi")) {
                     if (abbrP(svalue, "au")) {
                         hide = 2;
-//                        llSetAlpha(1 - running, ALL_SIDES);
                     } else {
                         hide = onOff(svalue);
-//                        llSetAlpha(1 - hide, ALL_SIDES);
                     }
                     sendProjSettings(0);
+
+                //  Set mega off
+
+                } else if (abbrP(sparam, "me") && (argn >= 3) &&
+                           abbrP(svalue, "of")) {
+                    llRequestPermissions(owner, PERMISSION_CHANGE_LINKS);
 
                 //  Set model 5/pentachoron/8/tesseract/16/hexadecachoron
 
@@ -912,7 +517,12 @@
                     } else if (abbrP(svalue, "16") || abbrP(svalue, "he")) {
                         mod = 16;
                     } else if (abbrP(svalue, "24") || abbrP(svalue, "ic")) {
-                        mod = 24;
+                        if (llGetNumberOfPrims() >= 97) {
+                            mod = 24;
+                        } else {
+                            tawk("Not configured for objects this complicated.  Use \"Mega\" version.");
+                            return FALSE;
+                        }
                     } else {
                         tawk("Unknown model.");
                         return FALSE;
@@ -931,30 +541,24 @@
 
                 } else if (abbrP(sparam, "po")) {
                     globalPos = (vector) svalue;
-//                    updateProj();
                     sendProjSettings(1);
 
                 //  Set projection parallel=orthographic/perspective
 
                 } else if (abbrP(sparam, "pr")) {
                     perspective = abbrP(svalue, "pe");
-//                    updateProj();
                     sendProjSettings(1);
 
                 //  Set scale n
 
                 } else if (abbrP(sparam, "sc")) {
                     globalScale = (float) svalue;
-//                    updateProj();
                     sendProjSettings(1);
 
                 //  Set tick n
 
                 } else if (abbrP(sparam, "ti")) {
                     timerTick = (float) svalue;
-//                    if (running) {
-//                        llSetTimerEvent(timerTick);
-//                    }
                     sendProjSettings(0);
 
                 //  Set trace on/off
@@ -975,7 +579,6 @@
                         tawk("Use Set from or Set angle");
                         return FALSE;
                     }
-//                    updateProj();
                     sendProjSettings(1);
 
                 } else {
@@ -1087,9 +690,6 @@
         state_entry() {
             whoDat = owner = llGetOwner();
 
-//            projMatrix = matident();
-//            animMatrix = matident();
-//            llMessageLinked(LINK_THIS, LM_PR_MTXRESET, "3", whoDat);
             //  Reset projections module
             llMessageLinked(LINK_THIS, LM_PR_RESET, "", whoDat);
 
@@ -1183,6 +783,28 @@
         touch_start(integer howmany) {
             if (llGetInventoryKey("Script: Touch") != NULL_KEY) {
                 processCommand(llDetectedKey(0), "Script run Touch", TRUE);
+            }
+        }
+
+        /*  The run_time_permissions event is used by
+            Set mega off to prune extra edges beyond those
+            required (32) for the tesseract.  */
+
+        run_time_permissions(integer which) {
+            if (which & PERMISSION_CHANGE_LINKS) {
+                integer n;
+                integer np = llGetNumberOfPrims();
+
+                for (n = 1; n < np; n++) {
+                    string lname = llGetLinkName(n);
+                    if ((llGetSubString(lname, 0, 4) == "Edge ") &&
+                        (((integer) llGetSubString(lname, 5, -1)) > 32)) {
+                            llSetLinkAlpha(n, 1, ALL_SIDES);
+                            llBreakLink(n);
+                            n--;
+                    }
+                }
+                llResetScript();
             }
         }
      }

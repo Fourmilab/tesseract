@@ -8,8 +8,6 @@
 
     string modelName;                   // Model name
     list vertex;                        // Unit tesseract vertex array
-    integer nVertex;                    // Number of vertices
-    integer nEdges;                     // Number of edges in current model
     list edgePath;                      // Edges defined as pairs of vertex indices
     list edgeAxis;                      // Local axis along which this 4D edge runs
 
@@ -34,7 +32,7 @@
 
         if (cells == 5) {           // 5-cell, pentachoron
             modelName = "Pentachoron (5-cell)";
-            edgePath = [
+            edgePath = [   // Edges defined as pairs of vertex indices
                 400,   1, 102, 203, 300,
                   2, 204, 401, 103, 304
             ];
@@ -71,7 +69,7 @@
 
         } else if (cells == 16) {       // 16-cell, hexadecachoron
             modelName = "Hexadecachoron (16-cell)";
-            edgePath = [
+            edgePath = [   // Edges defined as pairs of vertex indices
                   2,   3,   4,   5,   6,   7,
                 102, 103, 104, 105, 106, 107,
                           204, 205, 206, 207,
@@ -127,7 +125,7 @@
                 < 1, 1, 1, 1 >
             ];
 
-            edgePath = [
+            edgePath = [   // Edges defined as pairs of vertex indices
                 8, 809, 900, 810, 1000, 108, 901, 1001, 1011, 1100,
                 911, 1101, 812, 1200, 208, 902, 1202, 1213, 1300, 913,
                 1302, 308, 1003, 1203, 1214, 1400, 1014, 1403, 816,
@@ -150,9 +148,6 @@
                 2, 2, 2, 3, 3, 3
             ];
         }
-
-        nVertex = llGetListLength(vertex);      // Number of vertices
-        nEdges = llGetListLength(edgePath);     // Number of edges
     }
 
     default {

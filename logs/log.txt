@@ -230,3 +230,26 @@ which unlinks all edges with numbers greater than 32.  This means we
 can maintain the master model in the Mega configuration and, before
 shipping, make a copy, prune the extra edges, and save it as the
 standard version.
+
+Created local development Git repository in:
+    ~/w/SecondLife/Tesseract/git
+with:
+    git init
+
+Logged on to github.com.
+
+Created a new repository:
+    tesseract
+with access URLs:
+    HTTPS: https://github.com/Fourmilab/tesseract.git
+    SSH:   git@github.com:Fourmilab/tesseract.git
+
+Linked the local repository to the GitHub archive:
+    git remote add git@github.com:Fourmilab/tesseract.git
+
+Performed initial commit of the entire development directory tree.s
+
+Confirmed that my local "git sync" command works with the remote
+repository.
+
+The documents in the repository root now work properly.

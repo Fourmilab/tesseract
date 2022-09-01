@@ -9,7 +9,6 @@
     key owner;                          // Owner UUID
 
     key whoDat = NULL_KEY;              // Avatar who sent command
-//    integer restrictAccess = 0;         // Access restriction: 0 none, 1 group, 2 owner
     integer echo = TRUE;                // Echo chat and script commands ?
     integer trace = FALSE;              // Trace operation ?
     integer hide = FALSE;               // Hide deployer while running ?
@@ -29,8 +28,6 @@
 
     vector spinAxis = < 0, 0, 1 >;      // Omega spin axis
     float spinRate = 0;                 // Omega spin rate, radians/second
-
-//    string helpFileName = "Fourmilab Tesseract User Guide";
 
     integer whichModel = 8;             // Initial model to display
     string modelName;                   // Model name
@@ -57,7 +54,7 @@
 
     //  Model messages
     integer LM_MO_SELECT = 301;         // Get model definition
-//    integer LM_MO_STAT = 302;           // Print status
+//  integer LM_MO_STAT = 302;           // Print status
     integer LM_MO_DEFINITION = 303;     // Report model definition to requester'
 
     //  Projection messages
@@ -229,7 +226,7 @@
     //  vecscal4d  --  Scale a 4D vector by a constant
 
     rotation vecscal4d(rotation v, float s) {
-        return <v.x * s, v.y * s, v.z * s, v.s * s>;
+        return < v.x * s, v.y * s, v.z * s, v.s * s >;
     }
 
     //  vecxmat  --  Multiply a vector by a matrix
@@ -616,7 +613,6 @@
                     if (hide == 2) {
                         llSetAlpha(1, ALL_SIDES);
                     }
-//                    scriptResume();
                     llMessageLinked(LINK_THIS, LM_PR_RESUME, "", whoDat);
                 }
             } else {
