@@ -452,6 +452,16 @@
         }
     }
 
+    //  updateHide  --  Update visibility of controller
+
+    updateHide() {
+        if ((hide == 0) || (hide == 1)) {
+            llSetAlpha(1 - hide, ALL_SIDES);
+        } else if (hide == 2) {
+            llSetAlpha(1 - running, ALL_SIDES);
+        }
+    }
+
     default {
 
         state_entry() {
@@ -543,6 +553,7 @@
                 spinRate = llList2Float(l, 9);
                 hide = llList2Integer(l, 10);
                 timerTick = llList2Float(l, 11);
+                updateHide();
 
             //  LM_PR_RUN (316): Start or stop animation
 
@@ -560,9 +571,7 @@
                     llSetTimerEvent(0);
                     llMessageLinked(LINK_THIS, LM_PR_RESUME, "", whoDat);
                 }
-                if (hide == 2) {
-                    llSetAlpha(1 - running, ALL_SIDES);
-                }
+                updateHide();
 
             //  LM_PR_STAT (317): Print script status
 

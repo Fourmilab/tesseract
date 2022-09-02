@@ -247,9 +247,17 @@ with access URLs:
 Linked the local repository to the GitHub archive:
     git remote add git@github.com:Fourmilab/tesseract.git
 
-Performed initial commit of the entire development directory tree.s
+Performed initial commit of the entire development directory tree.
 
 Confirmed that my local "git sync" command works with the remote
 repository.
 
 The documents in the repository root now work properly.
+
+2022 September 2
+
+The breaking up of the main script into projections.lsl broke the Set
+hide command.  Added code to projections.lsl to correctly handle
+changes in the hide setting and the interaction of hide auto with
+running state.
+
