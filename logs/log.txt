@@ -261,3 +261,22 @@ hide command.  Added code to projections.lsl to correctly handle
 changes in the hide setting and the interaction of hide auto with
 running state.
 
+Completed production of the YouTube video to accompany the Marketplace
+listing for the product.
+
+2022 September 3
+
+Completed the YouTube video production, fixing a problem with alpha
+fade in the first segment.  Exported as Tesseract.mp4, with:
+    Target: MP4 (h.264)
+    Video Profile: HDV 720 24p (1280x720)
+    Quality: High
+producing a 1.2 Gb file.
+
+Uploaded file to YouTube and created description, including attribution
+for music.  Note: when you upload a video to YouTube, it will initially
+appear only in glorious 360p resolution.  According to a document
+discussing this issue, it can take "several hours" for the higher
+resolution options to become available.
+
+Added the YouTube video URL to the README.md file in the repository.

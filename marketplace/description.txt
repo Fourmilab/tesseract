@@ -2,7 +2,7 @@ Fourmilab Tesseract provides models of a four-dimensional hypercube and two othe
 
 Land Impact and Permissions
 
-When worn as an avatar accessory, Fourmilab Tesseract has no land impact or creation permissions required.  When rezzed as an object, it requires permission to create objects and has a land impact of 33.
+When worn as an avatar accessory, Fourmilab Tesseract has no land impact or creation permissions required.  When rezzed as an object, it requires permission to create objects and has a land impact of 33.  A “Mega” version which supports four-dimensional objects with up to 96 edges, allowing display of the 24-cell icositetrachoron, is included with the package, but has a land impact of 97 and can be rezzed in world only on land with sufficient free capacity.
 
 Development Kit
 

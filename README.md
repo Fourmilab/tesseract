@@ -29,7 +29,7 @@ copy, modify, and transfer it to other users within Second Life.
 
 ![Fourmilab Tesseract](marketplace/images/fourd20.png)
 
-A [video demonstration](https://www.youtube.com/watch?v=?)
+A [video demonstration](https://www.youtube.com/watch?v=MrK-Kz8HpJg)
 is available on YouTube.
 
 All of this software is licensed under the Creative Commons
