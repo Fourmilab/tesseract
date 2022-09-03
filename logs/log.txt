@@ -280,3 +280,8 @@ discussing this issue, it can take "several hours" for the higher
 resolution options to become available.
 
 Added the YouTube video URL to the README.md file in the repository.
+
+Added the latest versions of the standard script notecards: 
+Configuration, Demonstration, Hat, and Touch to the repository 
+notecards directory with capitalisation corresponding to the notecards 
+in the object inventory.
