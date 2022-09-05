@@ -9,8 +9,6 @@
     key owner;                          // Owner UUID
 
     key whoDat = NULL_KEY;              // Avatar who sent command
-    integer echo = TRUE;                // Echo chat and script commands ?
-    integer trace = FALSE;              // Trace operation ?
     integer hide = FALSE;               // Hide deployer while running ?
     integer running = FALSE;            // Are we running an animation ?
     float runEndTime = 0;               // Time to complete current run
@@ -67,6 +65,11 @@
     integer LM_PR_RUN = 316;            // Start or stop animation
     integer LM_PR_STAT = 317;           // Print status
     integer LM_PR_RESUME = 318;         // Resume script after projection command
+
+    //  Export messages
+    integer LM_EX_EXMODEL = 331;        // Export current model from Projections
+    integer LM_EX_EXVIEW = 332;         // Export current view from Projections
+    integer LM_EX_DATA = 333;           // Export data from Projections
 
     //  tawk  --  Send a message to the interacting user in chat
 
@@ -606,7 +609,33 @@
                 }
                 updateProj();
                 updateEdgeProps();
+
+            //  LM_EX_EXMODEL (331): Export model as defined
+            //  LM_EX_EXVIEW  (332): Export model as currently projected
+
+            } else if ((num == LM_EX_EXMODEL) || (num == LM_EX_EXVIEW)) {
+                string vtxs;
+                if (num == LM_EX_EXVIEW) {
+                    //  Build list of vertices transformed by current projection
+                    list tvtx;
+                    integer i;
+
+                    for (i = 0; i < nVertex; i++) {
+                        tvtx += vecxmat(llList2Rot(vertex, i), projMatrix);
+                    }
+                    vtxs = llList2Json(JSON_ARRAY, tvtx);
+                } else {
+                    vtxs = llList2Json(JSON_ARRAY, vertex);
+                }
+                llMessageLinked(LINK_THIS, LM_EX_DATA,
+                    llList2Json(JSON_ARRAY, [
+                        modelName,                          // Model name
+                        vtxs,                               // List of vertices
+                        llList2Json(JSON_ARRAY, edgePath),  // List of edges
+                        llList2Json(JSON_ARRAY, edgeAxis)   // Colour indices of edges
+                    ]), id);
             }
+
         }
 
         //  The timer updates the model while running

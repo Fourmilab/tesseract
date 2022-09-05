@@ -83,6 +83,19 @@ and lower case.)
         messages to those running them to let them know what they're
         doing.
 
+    Export [ view ]
+        Exports the currently loaded 4D model as a series of “Set model
+        custom” commands sent to local chat.  You can copy and paste
+        these into a notecard in the inventory of the object which,
+        when run as a script with the “Script run” command, will load a
+        model which reproduces what you export.  By default, the
+        original model with no transformations is exported.  If “view”
+        is specified, the transformed model will be exported, taking
+        into account all current rotations in 4D space which have been
+        applied to it.  Because the length of a message in chat is
+        limited, complex models are broken up into multiple chat
+        messages.
+
     Help
         Send this notecard to the requester.
 
@@ -145,6 +158,11 @@ and lower case.)
             is displayed.  The “Menu show” command may be used within
             menu button command lists, allowing complex chaining of
             menus and construction of hierarchical menu systems.
+
+    R
+        Repeats the last command entered from chat.  This is handy
+        when you wish to perform a lengthy command, such as rotation
+        or invoking a script, a number of times in succession.
 
     Rotate plane angle [ animate ]
     Rotate clear
@@ -435,6 +453,14 @@ and lower case.)
 
     Status
         Show status of the model, including settings and memory usage.
+
+DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
+
+    Configuration
+
+    Handedness
+
+    Touch
 
 CONFIGURATION NOTECARD
 

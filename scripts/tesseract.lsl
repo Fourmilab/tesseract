@@ -110,6 +110,12 @@
     integer LM_PR_STAT = 317;           // Print status
     integer LM_PR_RESUME = 318;         // Resume script after projection command
 
+    //  Export messages
+    integer LM_EX_EXMODEL = 331;        // Export current model from Projections
+    integer LM_EX_EXVIEW = 332;         // Export current view from Projections
+    integer LM_EX_DATA = 333;           // Export data from Projections
+    integer LM_EX_STAT = 334;           // Print status
+
     //  tawk  --  Send a message to the interacting user in chat
 
     tawk(string msg) {
@@ -308,6 +314,7 @@
 
     list args;              // Argument list
     integer argn;           // Argument list length
+    string lastCommand;     // Last command submitted
 
     integer processCommand(key id, string message, integer fromScript) {
 
@@ -318,6 +325,12 @@
         }
 
         whoDat = id;            // Direct chat output to sender of command
+
+        if ((llToLower(llStringTrim(message, STRING_TRIM)) == "r") &&
+            (lastCommand != "")) {
+            message = lastCommand;
+tawk("Repeat: " + lastCommand);
+        }
 
         /*  If echo is enabled, echo command to sender unless
             prefixed with "@".  The command is prefixed with ">>"
@@ -340,6 +353,10 @@
             tawk(prefix + message);                 // Echo command to sender
         }
 
+        if (!fromScript) {
+            //  If command from chat, remember for repeat
+            lastCommand = message;
+        }
         string lmessage = fixArgs(llToLower(message));
         args = llParseString2List(lmessage, [ " " ], []);    // Command and arguments
         argn = llGetListLength(args);               // Number of arguments
@@ -403,6 +420,15 @@
                             STRING_TRIM_TAIL);
             }
             tawk(emsg);
+
+        //  Export [ view ]         Export model (default) or current view
+
+        } else if (abbrP(command, "ex")) {
+            integer cmd = LM_EX_EXMODEL;
+            if (abbrP(sparam, "vi")) {
+                cmd = LM_EX_EXVIEW;
+            }
+            llMessageLinked(LINK_THIS, cmd, "", whoDat);
 
         //  Help                    Give help information
 
@@ -680,6 +706,8 @@
             llMessageLinked(LINK_THIS, LM_MO_STAT, "", id);
             //  Request status of Projection
             llMessageLinked(LINK_THIS, LM_PR_STAT, "", id);
+            //  Request status of Exporter
+            llMessageLinked(LINK_THIS, LM_EX_STAT, "", id);
             //  Request status of Script Processor
             llMessageLinked(LINK_THIS, LM_SP_STAT, "", id);
             //  Request status of Menu Processor

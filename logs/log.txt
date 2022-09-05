@@ -326,3 +326,14 @@ and can be repeated by an "r" command (with nothing else on the line).
 
 Made the first cut of the Chiral demo, which shows how rotation around
 the W axis can change the handedness of chiral objects in 3D.
+
+Implemented the Export command.  This writes, to local chat, the "Model
+custom" command which, cut and pasted into a script, will reproduce the
+currently loaded model, either as originally defined (the default) or
+as rotated by the current transform ("Export view").  A new export.lsl
+script handles formatting the export commands, while projections.lsl
+sends it either the original or transformed data.
+
+Completed the first cut of the "Handedness" demonstration script which
+shows how rotation in the fourth dimension can change the chirality
+of a 3D object.
