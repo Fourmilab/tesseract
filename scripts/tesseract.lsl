@@ -97,6 +97,7 @@
     integer LM_MO_SELECT = 301;         // Get model definition
     integer LM_MO_STAT = 302;           // Print status
 //  integer LM_MO_DEFINITION = 303;     // Report model definition to requester
+    integer LM_MO_CUSTOM = 304;         // Define custom model
 
     //  Projection messages
     integer LM_PR_RESET = 310;          // Reset projection module
@@ -507,27 +508,33 @@
                     llRequestPermissions(owner, PERMISSION_CHANGE_LINKS);
 
                 //  Set model 5/pentachoron/8/tesseract/16/hexadecachoron
+                //  Set model custom begin/edge/vertex/colours/end params...
 
                 } else if (abbrP(sparam, "mo")) {
-                    integer mod;
-                    if (abbrP(svalue, "5") || abbrP(svalue, "pe")) {
-                        mod = 5;
-                    } else if (abbrP(svalue, "8") || abbrP(svalue, "te")) {
-                        mod = 8;
-                    } else if (abbrP(svalue, "16") || abbrP(svalue, "he")) {
-                        mod = 16;
-                    } else if (abbrP(svalue, "24") || abbrP(svalue, "ic")) {
-                        if (llGetNumberOfPrims() >= 97) {
-                            mod = 24;
+                    if (abbrP(svalue, "cu")) {
+                        llMessageLinked(LINK_THIS, LM_CP_COMMAND,
+                            llList2Json(JSON_ARRAY, [ message, lmessage ] + args), whoDat);
+                    } else {
+                        integer mod;
+                        if (abbrP(svalue, "5") || abbrP(svalue, "pe")) {
+                            mod = 5;
+                        } else if (abbrP(svalue, "8") || abbrP(svalue, "te")) {
+                            mod = 8;
+                        } else if (abbrP(svalue, "16") || abbrP(svalue, "he")) {
+                            mod = 16;
+                        } else if (abbrP(svalue, "24") || abbrP(svalue, "ic")) {
+                            if (llGetNumberOfPrims() >= 97) {
+                                mod = 24;
+                            } else {
+                                tawk("Not configured for objects this complicated.  Use \"Mega\" version.");
+                                return FALSE;
+                            }
                         } else {
-                            tawk("Not configured for objects this complicated.  Use \"Mega\" version.");
+                            tawk("Unknown model.");
                             return FALSE;
                         }
-                    } else {
-                        tawk("Unknown model.");
-                        return FALSE;
+                        llMessageLinked(LINK_THIS, LM_MO_SELECT, (string) mod, whoDat);
                     }
-                    llMessageLinked(LINK_THIS, LM_MO_SELECT, (string) mod, whoDat);
 
                 //  Set name Object name
 

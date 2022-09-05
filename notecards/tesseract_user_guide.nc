@@ -26,13 +26,13 @@ multiple objects in proximity to one another, you may want to assign
 them different chat channels (see the Channel command below) so you can
 control each independently.
 
-An alternative version of Tesseract, called “Mega Tesseract”, is 
-included in the distribution.  This is identical to the regular version 
-but can display models with as many as 96 edges, which allows it to 
-display the 24-cell polytope (“icositetrachoron” or “octaplex”) in 
-addition to the three simpler models of the standard version.  This 
-comes at the cost of a land impact of 97, so you should only use this 
-version if you can spare the land impact and wish to display the 
+An alternative version of Tesseract, called “Mega Tesseract”, is
+included in the distribution.  This is identical to the regular version
+but can display models with as many as 96 edges, which allows it to
+display the 24-cell polytope (“icositetrachoron” or “octaplex”) in
+addition to the three simpler models of the standard version.  This
+comes at the cost of a land impact of 97, so you should only use this
+version if you can spare the land impact and wish to display the
 24-cell model.
 
 WEARING TESSERACT AS A HAT
@@ -300,29 +300,73 @@ and lower case.)
             hidden while a Run command is active and reappear when it
             is complete.
 
-        Set model which
-            Fourmilab Tesseract can display any of for of the simple
-            four-dimensional regular polytopes, not just the tesseract.
-            The Set model command selects the model displayed, using
-            the names below, with synonyms listed on each line.
-                5-cell pentachoron
-                8-cell tesseract
-                16-cell hexadecachoron
-                24-cell icositetrachoron  (“Mega” version only)
-            The cells of the 5-cell and 16-cells are tetrahedrons, the
-            cells of the 8-cell are cubes, and the cells of the 24-cell
-            are octahedrons.  (These are the four simplest 4D regular
-            polytopes, the remaining two have, respectively, 720 and
-            1300 edges and would have an unacceptably high land impact
-            in Second Life and take so long to update in the world and
-            display in the viewer that it is impractical to support
-            them.  Further, they are so complicated and their
-            projections so intricate that there is little insight to be
-            had from viewing them.)  The 24-cell model, which has 96
-            edges, can only be displayed by the “Mega” version of
-            Tesseract.  This version is included, but since it has a
-            land impact of 97, can only be used on land with the
-            capacity for such complex objects.
+        Set model
+            The Set model command specifies the four-dimensional model
+            which is displayed.  This may be one of the regular
+            polytopes built into the object, specified by name, or a
+            custom model with vertices, edges, and colours specified
+            by “Set model custom” commands.
+
+            Set model names
+                Fourmilab Tesseract can display any of for of the
+                simple four-dimensional regular polytopes, not just the
+                tesseract. The Set model command selects the model
+                displayed, using the names below, with synonyms listed
+                on each line.
+                    5-cell pentachoron
+                    8-cell tesseract
+                    16-cell hexadecachoron
+                    24-cell icositetrachoron  (“Mega” version only)
+                The cells of the 5-cell and 16-cells are tetrahedrons,
+                the cells of the 8-cell are cubes, and the cells of the
+                24-cell are octahedrons.  (These are the four simplest
+                4D regular polytopes, the remaining two have,
+                respectively, 720 and 1300 edges and would have an
+                unacceptably high land impact in Second Life and take
+                so long to update in the world and display in the
+                viewer that it is impractical to support them.
+                Further, they are so complicated and their projections
+                so intricate that there is little insight to be had
+                from viewing them.)  The 24-cell model, which has 96
+                edges, can only be displayed by the “Mega” version of
+                Tesseract.  This version is included, but since it has
+                a land impact of 97, can only be used on land with the
+                capacity for such complex objects.
+
+            Set model custom begin
+                Begin definition of a custom object, defined by
+                subsequent “vertices” and “edges” declaration.
+
+            Set model custom vertices <x1,y1,z1,w1> ...
+                Define the vertices in the model.  Each is specified as
+                X, Y, Z, and W co-ordinates inside brackets.  Linden
+                Scripting Language (LSL) programmers should note that
+                these specifications are not rotations, but
+                four-dimensional Euclidean co-ordinates.  Vertices are
+                numbered starting from zero in the order specified.
+                You can specify vertices on as many statememts as you
+                wish.  All vertices must be declared before edges are
+                defined.
+
+            Set model custom edges e1v1 e1v2  e2v1 e2v2 ...
+                Define the edges in the model.  Edges are specified by
+                the numbers of the vertices of their ends.  It makes
+                no difference in which order the vertex number are
+                specified.
+
+            Set model custom colours index1 index2 index3 ...
+                Specify the color in which edges should be drawn, using
+                the colour codes defined above for the "Set colour
+                axes" command, with 0 through 3 denoting the colours
+                for the X, Y, Z, and W axes respectively.  If no
+                colours are specified, colours will be assigned
+                automatically based upon which axis the edge is most
+                closely aligned.
+
+            Set model custom end
+                Completes the definition of a custom model, error
+                checks the definition, and if no problems are found,
+                activates the model.
 
         Set name Name of object
             Sets the name of the object to the specified text, which

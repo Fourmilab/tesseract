@@ -281,7 +281,48 @@ resolution options to become available.
 
 Added the YouTube video URL to the README.md file in the repository.
 
-Added the latest versions of the standard script notecards: 
-Configuration, Demonstration, Hat, and Touch to the repository 
-notecards directory with capitalisation corresponding to the notecards 
+Added the latest versions of the standard script notecards:
+Configuration, Demonstration, Hat, and Touch to the repository
+notecards directory with capitalisation corresponding to the notecards
 in the object inventory.
+
+2022 September 4
+
+Completed integration of the "Set model custom" facility in models.lsl.
+This adds four auxiliary commands, processed in that file, which allow
+users to define custom 4D models with commands like:
+    Set model custom begin
+    Set model custom vertices <1.0, 0.0, 0.0, 0.0> <-1.0, 0.0, 0.0, 0.0>
+    Set model custom edges 0 8  0 10  0 12  0 14  0 16  0 18  0 20  0 22
+    Set model custom colours 0 0 4 3 1 1 2
+    Set model custom end
+If no edge colours are specified, they will be assigned automatically
+based on the axis in which the edge has the longest extent.  This
+automatic edge colouring is now also available for built-in models, but
+can be overridden by specifying explicit colours.
+
+Updated the built-in 24-cell model to use an initial orientation that
+displays the symmetry better and use the new automatic colour assignment
+for edges.
+
+Added a demonstration script notecard, "24cell", to illustrate custom
+model definition.  It creates the same 24-cell model as the built-in
+code.
+
+Changed the 8-cell and 16-cell built in models to use automatic edge
+colour assignment.
+
+Made a notecard script, "8cell", to define the tesseract using the
+"Set model custom" commands.  This will be the main example for custom
+model definition.  It produces a model identical to that of the
+built-in tesseract definition.
+
+2022 September 5
+
+Since development of demonstration scripts involves repeated reloading
+of the "Script run" and other commands, I added a gimmick where the
+last command entered from chat (but not a script or menu) is saved
+and can be repeated by an "r" command (with nothing else on the line).
+
+Made the first cut of the Chiral demo, which shows how rotation around
+the W axis can change the handedness of chiral objects in 3D.
