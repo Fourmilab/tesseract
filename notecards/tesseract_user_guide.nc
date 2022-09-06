@@ -215,15 +215,17 @@ and lower case.)
         rotations while leaving the orientation of the object
         unchanged.
 
-    Run on/off/time
+    Run on/off/time/steps [ steps ]
         Starts or stops an animation in which the object is rotated
         every time tick (see “Set tick” below) by the previously
         specified “Rotate ... animate” commands.  If a number is
         specified instead of “on” or “off”, the animation will run for
-        that number of seconds and stop automatically.  Execution of
-        commands from a script is suspended while an animation is in
-        progress, so you can use timed Run commands in a script to
-        demonstrate different rotations.
+        that number of seconds and stop automatically or, if “steps” is
+        specified after the number, after that number of animation
+        steps (useful when you want to animate a precise rotation).
+        Execution of commands from a script is suspended while an
+        animation is in progress, so you can use timed or step limited
+        Run commands in a script to demonstrate different rotations.
 
     Script
         These commands control the running of scripts stored in
@@ -456,11 +458,56 @@ and lower case.)
 
 DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
 
+    The following script notecards are included in the inventory of the
+    Tesseract object and may be run with the chat command “Script run”
+    followed by the name of the script, which may not be abbreviated
+    and must be given with capital and lower case letters as shown.
+    All of these notecards are full permission so you can use them as
+    models for your own development.
+
+    24cell
+        “Set model custom” definition of the 24-cell polytope.  This
+        is an example of how custom models are defined.  This model
+        can only be loaded on the “Mega” version of the object, as it
+        has 96 edges.
+
+    8cell
+        “Set model custom” definition of the tesseract (8-cell)
+        polytope.  This is an example of how custom models are defined.
+        You can load this in any version of Tesseract.  The model it
+        defines is identical to the built-in 8-cell object.
+
     Configuration
+        Default configuration script, which simply displays a message
+        letting the user know the Demonstration script may be run by
+        touching the model anywhere.
+
+    Demonstration
+        This is the standard demonstration script that is run when the
+        object is touched.  It is similar to the YouTube demo of the
+        product, but doesn't spend as long on each item.
 
     Handedness
+        Demonstrates how the handedness (or chirality) of a
+        three-dimensional object can be changed by rotating it in the
+        fourth dimension. Illustrates custom object definition,
+        interactive menus, and how to build tutorials as scripts.
+
+    Hat
+        Re-configures the generic Tesseract object to be worn as a hat.
+        The first time you wear the hat you'll have to explicitly
+        attach it to your skull.  After that, it should remember its
+        attach point.
 
     Touch
+        Default script run when the object is touched.  As supplied,
+        runs the Demonstration script.
+
+    Tumble
+        Tumbles the current object around the X-W, Z-W, and Y-Z planes
+        for 30 seconds.  At the end, it leaves the transformations in
+        effect, so you can make the tumble indefinite by entering “Run
+        on”.
 
 CONFIGURATION NOTECARD
 

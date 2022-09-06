@@ -337,3 +337,16 @@ sends it either the original or transformed data.
 Completed the first cut of the "Handedness" demonstration script which
 shows how rotation in the fourth dimension can change the chirality
 of a 3D object.
+
+2022 September 6
+
+Due to the 100 millisecond enforced script delay when retrieving lines
+from a notecard, animations done from notecard scripts will be jerky.
+I added the ability to constrain an animation to a specified number
+of tick steps, for example:
+    rotate xy 5 animate
+    run 36 steps
+will smoothly rotate 180 degrees around the X-Y axi.
+
+Revised the "Handedness" script to use the new step-limited animation
+feature to perform smooth animations.

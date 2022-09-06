@@ -42,17 +42,8 @@
 @echo
 @echo Rotate around Z axis
 
-rotate xy 60
-@script pause 0.5
-rotate xy 60
-@script pause 0.5
-rotate xy 60
-@script pause 0.5
-rotate xy 60
-@script pause 0.5
-rotate xy 60
-@script pause 0.5
-rotate xy 60
+rotate xy 5 animate
+run 72 steps
 
 @script pause 3
 
@@ -64,11 +55,9 @@ rotate xy 60
 @echo
 @echo Rotate around Y axis
 
-rotate xz 60
-@script pause 0.5
-rotate xz 60
-@script pause 0.5
-rotate xz 60
+rotate clear
+rotate xz 5 animate
+run 36 steps
 
 @script pause 3
 
@@ -105,17 +94,9 @@ rotate xz 60
 @echo
 @echo Rotate around X-W plane
 
-rotate xw 30
-@script pause 0.5
-rotate xw 30
-@script pause 0.5
-rotate xw 30
-@script pause 0.5
-rotate xw 30
-@script pause 0.5
-rotate xw 30
-@script pause 0.5
-rotate xw 30
+rotate clear
+rotate xw 5 animate
+run 36 steps
 
 @script pause 3
 
@@ -137,34 +118,18 @@ rotate xw 30
 @echo
 @echo Rotate around YW plane in 4D
 
-rotate yw 30
-@script pause 0.5
-rotate yw 30
-@script pause 0.5
-rotate yw 30
-@script pause 0.5
-rotate yw 30
-@script pause 0.5
-rotate yw 30
-@script pause 0.5
-rotate yw 30
+rotate clear
+rotate yw 5 animate
+run 36 steps
 
 @script pause 3
 
 @echo
 @echo Rotate around Z axis in 3D
 
-rotate xy 30
-@script pause 0.5
-rotate xy 30
-@script pause 0.5
-rotate xy 30
-@script pause 0.5
-rotate xy 30
-@script pause 0.5
-rotate xy 30
-@script pause 0.5
-rotate xy 30
+rotate clear
+rotate xy 5 animate
+run 36 steps
 
 @script pause 3
 
@@ -195,4 +160,5 @@ rotate xy 30
 
 @menu delete Rotate
 
+@rotate reset
 @echo That's it.  Have fun in the fourth dimension!

@@ -12,6 +12,7 @@
     integer hide = FALSE;               // Hide deployer while running ?
     integer running = FALSE;            // Are we running an animation ?
     float runEndTime = 0;               // Time to complete current run
+    integer runEndStep = 0;             // Steps left in step-limited run
     float timerTick = 0.05;             // Spin animation timer interval
 
     float globalScale = 1;              // Scale of projected object
@@ -564,7 +565,8 @@
                 list l = llJson2List(str);
                 running = llList2Integer(l, 0);
                 runEndTime = llList2Float(l, 1);
-                hide = llList2Integer(l, 2);
+                runEndStep = llList2Integer(l, 2);
+                hide = llList2Integer(l, 3);
                 if (running) {
                     if (runEndTime > 0) {
                         runEndTime += llGetTime();
@@ -644,14 +646,19 @@
             if (running) {
                 updateOrientation();
                 updateProj();
-                if ((runEndTime > 0) && (llGetTime() > runEndTime)) {
+                if (((runEndTime > 0) && (llGetTime() > runEndTime)) ||
+                    (runEndStep == 1)) {
                     running = FALSE;
                     runEndTime = 0;
+                    runEndStep = 0;
                     llSetTimerEvent(0);
                     if (hide == 2) {
                         llSetAlpha(1, ALL_SIDES);
                     }
                     llMessageLinked(LINK_THIS, LM_PR_RESUME, "", whoDat);
+                }
+                if (runEndStep > 0) {
+                    runEndStep--;
                 }
             } else {
                 llSetTimerEvent(0);

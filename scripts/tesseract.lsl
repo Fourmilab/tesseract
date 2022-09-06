@@ -468,12 +468,17 @@ tawk("Repeat: " + lastCommand);
                 }
             }
 
-        //  Run on/off/time         Start or stop model animation
+        //  Run on/off/time [ steps ]   Start or stop model animation
 
         } else if (abbrP(command, "ru")) {
             float runDuration = 0;
+            integer runSteps = 0;
             if (llSubStringIndex("0123456789.", llGetSubString(sparam, 0, 0)) >= 0) {
-                runDuration = ((float) sparam);
+                if ((argn > 2) && abbrP(llList2String(args, 2), "st")) {
+                    runSteps = (integer) sparam;
+                } else {
+                    runDuration = (float) sparam;
+                }
                 sparam = "on";
             }
             running = onOff(sparam);
@@ -484,6 +489,7 @@ tawk("Repeat: " + lastCommand);
                 llList2Json(JSON_ARRAY,
                 [ running,
                   runDuration,
+                  runSteps,
                   hide ]), whoDat);
 
         //  Set                     Set parameter
