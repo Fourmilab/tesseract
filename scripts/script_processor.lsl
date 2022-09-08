@@ -34,6 +34,9 @@
     list ncQline = [ ];             // Stack of pending notecard positions
     list ncLoops = [ ];             // Loop stack
 
+    list defName = [ ];             // Names of definitions
+    list defValue = [ ];            // Values of definitions
+
     list menuName;                  // Names of defined menus
     list menuContent;               // JSON-encoded content of menus
     integer activeMenuLength;       // Length of currently-executing menu
@@ -264,6 +267,73 @@
         return FALSE;                       // Not "Script"
     }
 
+    //  findDefinition  --  Find definition of a macro name
+
+    integer findDefinition(string name) {
+        integer index = -1;
+
+        if (defName != [ ]) {
+            index = llListFindList(defName, [ name ]);
+        }
+        return index;
+    }
+
+    //  deleteDefinition  --  Delete definition, if present
+
+    integer deleteDefinition(string name) {
+        integer index = findDefinition(name);
+        if (index >= 0) {
+            defName = llDeleteSubList(defName, index, index);
+            defValue = llDeleteSubList(defValue, index, index);
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    //  expandDefinitions  --  Expand definition reference in string
+
+    string expandDefinitions(string s) {
+        integer finding = TRUE;
+        string ns;
+        while (finding) {
+            integer p1 = llSubStringIndex(s, "{");
+            integer p2 = llSubStringIndex(s, "}");
+            if ((p1 >= 0) && ((p2 - p1) > 1)) {
+                string dName = llGetSubString(s, p1 + 1, p2 - 1);   // Definition name
+                integer dn = findDefinition(dName);
+                if (dn >= 0) {
+                    if (p1 > 0) {
+                        ns += llGetSubString(s, 0, p1 - 1);     // Part of string before substitution
+                    }
+                    string rs = llList2String(defValue, dn);
+                    if (p2 < (llStringLength(s) - 1)) {
+                        rs += llGetSubString(s, p2 + 1, -1);    // Append part of string after substitution
+                    }
+                    s = rs;
+                } else {
+                    ns += llGetSubString(s, 0, p2);
+                    if (p2 < (llStringLength(s) - 1)) {
+                        s = llGetSubString(s, p2 + 1, -1);
+                    } else {
+                        finding = FALSE;
+                    }
+                }
+            } else if ((p1 < 0) && (p2 < 0)) {
+                //  No substitutions remain in string
+                ns += s;
+                finding = FALSE;
+            } else if ((p1 > 0) && (p2 >= 0) && (p2 < p1)) {
+                //  Close brace found before open brace
+                ns += llGetSubString(s, 0, p2);
+                s = llGetSubString(s, p2 + 1, -1);
+            } else {
+                ns += s;
+                finding = FALSE;
+            }
+        }
+        return ns;
+    }
+
     //  isMenu  --  Is a data source a menu ?
 
     integer isMenu(string sname) {
@@ -405,27 +475,10 @@ else { tawk("What!!  Menu source " + ncSource + " missing at end of file!"); }
         if (data == EOF) {
             if (isMenu(ncSource)) {
                 deleteMenuSelection(ncSource);
-/*
-                //  Source is a menu selection.  Delete it
-                integer mnum = findMenu(ncSource);
-                if (mnum >= 0) {
-                    menuName = llDeleteSubList(menuName, mnum, mnum);
-                    menuContent = llDeleteSubList(menuContent, mnum, mnum);
-                    ttawk("Deleted menu source " + ncSource);
-                }
-else { tawk("What!!  Menu source " + ncSource + " missing at end of file!"); }
-*/
             }
             if (llGetListLength(ncQueue) > 0) {
                 //  This script is done.  Pop to outer script.
                 popScriptSource();
-/*
-                ncSource = llList2String(ncQueue, 0);
-                ncQueue = llDeleteSubList(ncQueue, 0, 0);
-                ncLine = llList2Integer(ncQline, 0);
-                ncQline = llDeleteSubList(ncQline, 0, 0);
-                ttawk("Pop to " + ncSource + " line " + (string) ncLine);
-*/
                 //  Fetch next line from outer script we just popped
                 if (isMenu(ncSource)) {
                     data = getMenuLine(ncSource, ncLine);
@@ -447,6 +500,13 @@ else { tawk("What!!  Menu source " + ncSource + " missing at end of file!"); }
             string s = llStringTrim(data, STRING_TRIM);
             //  Ignore comments and send valid commands to client
             if ((llStringLength(s) > 0) && (llGetSubString(s, 0, 0) != "#")) {
+                list args = llParseString2List(llToLower(s), [" "], [ ]);
+                integer argn = llGetListLength(args);
+                if (!((argn >= 2) && abbrP(llList2String(args, 0), "me") && abbrP(llList2String(args, 1), "bu"))) {
+                    if (defName != [ ]) {
+                        s = expandDefinitions(s);
+                    }
+                }
                 if (processScriptCommand(s)) {
                     if (pauseExpiry > 0) {
                         /*  We have processed a Script pause command
@@ -567,6 +627,42 @@ else { tawk("What!!  Menu source " + ncSource + " missing at end of file!"); }
                     processNotecardCommands("Script: " +
                         inventoryName("ru", lmessage, message), id);
                 }
+
+            //  Script set name Value  --  Define a macro
+
+            } else if (abbrP(sparam, "se")) {
+                if (argn >= 4) {        // Name and value: create or update definition
+                    string setName = llList2String(args, 2);
+                    //  If name already defined, delete it
+                    deleteDefinition(setName);
+                    string setValue = inventoryName("se", lmessage, message);
+                    setValue = llStringTrim(llGetSubString(setValue,
+                        llSubStringIndex(setValue, " ") + 1, -1), STRING_TRIM_HEAD);
+                    if ((llGetSubString(setValue, 0, 0) == "\"") &&
+                        (llGetSubString(setValue, -1, -1) == "\"") &&
+                        (llStringLength(setValue) > 1)) {
+                        setValue = llGetSubString(setValue, 1, -2);
+                    }
+                    defName += setName;
+                    defValue += setValue;
+                } else if (argn == 3) { // Name alone: delete name or * all names
+                    string setName = llList2String(args, 2);
+                    if (setName == "*") {
+                        defName = defValue = [ ];
+                    } else {
+                        if (!deleteDefinition(setName)) {
+                            tawk(setName + " not defined.");
+                        }
+                    }
+                } else {                // No name: list current definitions
+                    integer i;
+                    integer n = llGetListLength(defName);
+
+                    for (i = 0; i < n; i++) {
+                        tawk("  " + llList2String(defName, i) + " = \"" +
+                            llList2String(defValue, i) + "\"");
+                    }
+                }
             }
         }
         return TRUE;
@@ -586,6 +682,7 @@ else { tawk("What!!  Menu source " + ncSource + " missing at end of file!"); }
             ncQueue = [ ];                  // Queue of pending notecards
             ncQline = [ ];                  // Clear queue of return line numbers
             ncLoops = [ ];                  // Clear queue of loops
+            defName = defValue = [ ];       // Delete all macro definitions
         }
 
         /*  The link_message() event receives commands from the client

@@ -346,7 +346,45 @@ I added the ability to constrain an animation to a specified number
 of tick steps, for example:
     rotate xy 5 animate
     run 36 steps
-will smoothly rotate 180 degrees around the X-Y axi.
+will smoothly rotate 180 degrees around the X-Y axis.
 
 Revised the "Handedness" script to use the new step-limited animation
 feature to perform smooth animations.
+
+2022 September 7
+
+Integrated the first cut a script and menu macro facility.  This is
+implemented entirely in script_processor.lsl.  The main facility is the
+new "Script set" command:
+    Script set name "Value"         Defines a macro
+    Script set name                 Deletes a macro
+    Script set *                    Deletes all macros
+    Script set                      Lists all defined macros
+Macros are referenced in Menu and Script commands by their name
+enclosed in {curly brackets}.  For example, a menu button intended to
+perform rotation around an axis in a rotation menu called Rots might
+be defined:
+    menu button "xy" "rotate xy {sign}{ang}" "menu show Rots"
+in a script which has previously defined:
+    script set sign "+"
+    script set ang "30"
+You could then define buttons in the menu:
+    menu button "15°" "script set ang 15" "menu show Rots"
+    menu button "30°" "script set ang 30" "menu show Rots"
+    menu button "+" "script set sign +" "menu show Rots"
+    menu button "−" "script set sign -" "menu show Rots"
+which allow the user to set the amount and direction of the rotation
+performed by the buttons that specify the plane.
+
+The only nasty gimmick is that macro expansion is suppressed in the
+"Menu button" command, preserving the macro references and deferring
+expansion until the menu button is pressed and its commands are
+executed by the Script Processor.  Malformed macro invocations or
+references to undefined macros are left as-is on the command line,
+which should make it obvious to the user what went wrong.
+
+2022 September 8
+
+Updated the in-development Commander script to use the macro facility
+to replace the messy Rotate+ and Rotate- menus used previously with a
+single Rotate menu which allows selection of sign and angle by buttons.

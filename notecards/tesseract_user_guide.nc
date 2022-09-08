@@ -4,15 +4,18 @@
 Fourmilab Tesseract allows you to view four-dimensional objects such as
 the tesseract (hypercube, 4-cube, four-dimensional analogue of the
 three dimensional cube) by projecting them from four-dimensional space
-into the three-dimensional Second Life world as a wire frame model.
-You can project the object in either a perspective or an orthographic
+into the three-dimensional Second Life world as a wire frame model. You
+can project the object in either a perspective or an orthographic
 (parallel) projection and, for perspective views, set the viewpoint and
 angle of view.  Commands allow you to scale and rotate the object in
-four dimensional space around any of the pairs of planes defined by the
-four orthogonal axes and smoothly animate rotations in any combination
-of planes and speeds.  The object is fully scriptable with commands
+four dimensional space around any of the six planes defined by the four
+orthogonal axes and smoothly animate rotations in any combination of
+planes and speeds.  The object is fully scriptable with commands
 supplied in notecards in its inventory and scripts may define pop-up
 menus through which an avatar may interact with the model.
+
+A demonstration of the models and features may be viewed on YouTube at:
+    https://www.youtube.com/watch?v=MrK-Kz8HpJg
 
 REZZING TESSERACT IN-WORLD
 
@@ -24,7 +27,10 @@ edges of the four-dimensional object.  You can create as many models as
 you wish, limited only by your parcel's prim capacity.  If you create
 multiple objects in proximity to one another, you may want to assign
 them different chat channels (see the Channel command below) so you can
-control each independently.
+control each independently.  You can demonstrate and control many of
+the features of Tesseract from a system of menus which can be launched
+by the chat command:
+    /1888 script run Commander
 
 An alternative version of Tesseract, called “Mega Tesseract”, is
 included in the distribution.  This is identical to the regular version
@@ -88,7 +94,7 @@ and lower case.)
         custom” commands sent to local chat.  You can copy and paste
         these into a notecard in the inventory of the object which,
         when run as a script with the “Script run” command, will load a
-        model which reproduces what you export.  By default, the
+        model which reproduces what you exported.  By default, the
         original model with no transformations is exported.  If “view”
         is specified, the transformed model will be exported, taking
         into account all current rotations in 4D space which have been
@@ -141,7 +147,7 @@ and lower case.)
             user closes its window.
 
         Menu list [ name ]
-            If no name is specified, lists the names of defined menu.
+            If no name is specified, lists the names of defined menus.
             If a name is given, lists the buttons of that menu and
             the commands they run when clicked.
 
@@ -251,6 +257,29 @@ and lower case.)
             appear within a script.  Entering “Script run” with no
             script name terminates any running script(s).
 
+        Script set name "Value"
+            Defines a macro with the given name and value which may be
+            used in script and menu commands by specifying the name
+            within curly brackets.  Names are case-insensitive, but
+            values are case-sensitive and may contain spaces.  For
+            example, in a menu you might define a button:
+                menu button "Rotate" "rotate {plane} {sign}{ang}" "menu show Rot"
+            where the macros can be changed by other buttons in the
+            menu, for example:
+                menu button "XY" "script set plane xy" "menu show Rot"
+
+        Script set name
+            Deletes a macro with the specified name.  Macros remain
+            defined until the script processor is reset or they are
+            explicitly deleted, so scripts and menus should clean up
+            macros they define to avoid memory exhaustion errors.
+
+        Script set *
+            Deletes all defined macros.
+
+        Script set
+            Lists all defined macros and their values.
+
             The following commands may be used only within scripts or
             commands defined for Menu buttons.
 
@@ -286,7 +315,7 @@ and lower case.)
                 at 15 minutes after the hour.
                     Script loop
                         Script wait 1h 15m
-                        Run 300
+                        Script run MyHourlyShow
                     Script end
 
     Set
@@ -298,13 +327,12 @@ and lower case.)
             values between 0 and one, with an optional transparency
             value (0 transparent, 1 solid), all edges of the model will
             be that colour.  If “axes” is specified, edges which align
-            with the four axes in 4D space are coloured as follows:
+            most closely with the four axes in 4D space are coloured as
+            follows:
                 X   Red
                 Y   Green
                 Z   Blue
                 W   Orange
-            and edges which do not align with one of the axes will be
-            yellow.
 
         Set diameter
             The edges of the object will be shown as cylinders with the
@@ -328,7 +356,7 @@ and lower case.)
             by “Set model custom” commands.
 
             Set model names
-                Fourmilab Tesseract can display any of for of the
+                Fourmilab Tesseract can display any of four of the
                 simple four-dimensional regular polytopes, not just the
                 tesseract. The Set model command selects the model
                 displayed, using the names below, with synonyms listed
@@ -355,7 +383,8 @@ and lower case.)
 
             Set model custom begin
                 Begin definition of a custom object, defined by
-                subsequent “vertices” and “edges” declaration.
+                subsequent “vertices”, “edges”, and “colours”
+                declarations.
 
             Set model custom vertices <x1,y1,z1,w1> ...
                 Define the vertices in the model.  Each is specified as
@@ -364,7 +393,7 @@ and lower case.)
                 these specifications are not rotations, but
                 four-dimensional Euclidean co-ordinates.  Vertices are
                 numbered starting from zero in the order specified.
-                You can specify vertices on as many statememts as you
+                You can specify vertices on as many statements as you
                 wish.  All vertices must be declared before edges are
                 defined.
 
@@ -417,10 +446,10 @@ and lower case.)
         Set scale n
             Set the scale factor used when projecting the 4D model to
             3D space.  The default scale factor is 1; adjust the scale
-            to make the 3D projection the size you wish.  The scale
-            factor only affects the length of the edges, not their
-            diameter; adjust “Set diameter” appropriately to get the
-            effect you wish.
+            to make the 3D projection whatever size you wish.  The
+            scale factor only affects the length of the edges, not
+            their diameter; adjust “Set diameter” appropriately to get
+            the effect you wish.
 
         Set tick n
             Sets the time in seconds between animation steps when the
@@ -454,7 +483,7 @@ and lower case.)
         do it for artistic effect, go right ahead.
 
     Status
-        Show status of the model, including settings and memory usage.
+        Show status of the object, including settings and memory usage.
 
 DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
 
@@ -468,7 +497,7 @@ DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
     24cell
         “Set model custom” definition of the 24-cell polytope.  This
         is an example of how custom models are defined.  This model
-        can only be loaded on the “Mega” version of the object, as it
+        can only be loaded by the “Mega” version of the object, as it
         has 96 edges.
 
     8cell
@@ -481,6 +510,12 @@ DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
         Default configuration script, which simply displays a message
         letting the user know the Demonstration script may be run by
         touching the model anywhere.
+
+    Commander
+        Script which defines and displays a series of linked menus
+        that provide access to many of the Tesseract commands and
+        options without requiring use of chat commands.  Illustrates
+        how to build an interactive menu system.
 
     Demonstration
         This is the standard demonstration script that is run when the
@@ -529,7 +564,7 @@ and result in confusion.
 PERMISSIONS AND THE DEVELOPMENT KIT
 
 Fourmilab Tesseract is delivered with “full permissions”.  Every part
-of the object, including the script, may be copied, modified, and
+of the object, including the scripts, may be copied, modified, and
 transferred subject only to the license below.  If you find a bug and
 fix it, or add a feature, please let me know so I can include it for
 others to use.  The distribution includes a “Development Kit”
