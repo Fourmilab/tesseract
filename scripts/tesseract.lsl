@@ -533,10 +533,14 @@ tawk("Repeat: " + lastCommand);
                     }
                     sendProjSettings(0);
 
-                //  Set mega off
+                //  Set mega off [ numlinks ]
 
                 } else if (abbrP(sparam, "me") && (argn >= 3) &&
                            abbrP(svalue, "of")) {
+                    whichModel = 32;            // Default number of links
+                    if (argn >= 4) {
+                        whichModel = llList2Integer(args, 3);
+                    }
                     llRequestPermissions(owner, PERMISSION_CHANGE_LINKS);
 
                 //  Set model 5/pentachoron/8/tesseract/16/hexadecachoron
@@ -829,7 +833,11 @@ tawk("Repeat: " + lastCommand);
 
         /*  The run_time_permissions event is used by
             Set mega off to prune extra edges beyond those
-            required (32) for the tesseract.  */
+            required (32) for the tesseract.  We hide the
+            number of links which should remain, which can
+            optionally be specified on the command, in
+            whichModel to avoid adding a new global variable
+            for this.  */
 
         run_time_permissions(integer which) {
             if (which & PERMISSION_CHANGE_LINKS) {
@@ -839,7 +847,7 @@ tawk("Repeat: " + lastCommand);
                 for (n = 1; n < np; n++) {
                     string lname = llGetLinkName(n);
                     if ((llGetSubString(lname, 0, 4) == "Edge ") &&
-                        (((integer) llGetSubString(lname, 5, -1)) > 32)) {
+                        (((integer) llGetSubString(lname, 5, -1)) > whichModel)) {
                             llSetLinkAlpha(n, 1, ALL_SIDES);
                             llBreakLink(n);
                             n--;

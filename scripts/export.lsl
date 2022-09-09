@@ -115,14 +115,18 @@
         for (i = 0; i < nVertex; i++) {
             string vs = " " + efr(llList2Rot(vertex, i));
             if ((llStringLength(l) + llStringLength(vs)) > 80) {
-                s += l + "\n";
-                if (llStringLength(s) > 940) {
+                if ((llStringLength(s) + llStringLength(l)) >= 1022) {
                     tawk(llGetSubString(s, 0, -2));
                     s = "(continued)\n";
                 }
+                s += l + "\n";
                 l = prefix;
             }
             l += vs;
+        }
+        if ((llStringLength(s) + llStringLength(l)) >= 1022) {
+            tawk(llGetSubString(s, 0, -2));
+            s = "(continued)\n";
         }
         s += l + "\n";
 
@@ -134,20 +138,20 @@
             string es = " " + (string) ((integer) (e / 100)) +
                         " " + (string) (e % 100) + " ";
             if ((llStringLength(l) + llStringLength(es)) > 80) {
-                s += llGetSubString(l, 0, -2) + "\n";
-                if (llStringLength(s) > 940) {
+                if ((llStringLength(s) + llStringLength(l)) >= 1022) {
                     tawk(llGetSubString(s, 0, -2));
                     s = "(continued)\n";
                 }
+                s += llGetSubString(l, 0, -2) + "\n";
                 l = prefix;
             }
             l += es;
         }
-        s += llGetSubString(l, 0, -2) + "\n";
-        if (llStringLength(s) > 940) {
+        if ((llStringLength(s) + llStringLength(l)) >= 1022) {
             tawk(llGetSubString(s, 0, -2));
             s = "(continued)\n";
         }
+        s += llGetSubString(l, 0, -2) + "\n";
 
         //  Edge colours
         prefix = "Set model custom colours";
@@ -156,20 +160,20 @@
         for (i = 0; i < nc; i++) {
             string cs = " " + (string) llList2Integer(edgeAxis, i);
             if ((llStringLength(l) + llStringLength(cs)) > 80) {
-                s += l + "\n";
-                if (llStringLength(s) > 940) {
+                if ((llStringLength(s) + llStringLength(l)) >= 1022) {
                     tawk(llGetSubString(s, 0, -2));
                     s = "(continued)\n";
                 }
+                s += l + "\n";
                 l = prefix;
             }
             l += cs;
         }
-        s += l + "\n";
-        if (llStringLength(s) > 940) {
+        if ((llStringLength(s) + llStringLength(l)) >= 1022) {
             tawk(llGetSubString(s, 0, -2));
             s = "(continued)\n";
         }
+        s += l + "\n";
 
         s += "Set model custom end";
         tawk(s);

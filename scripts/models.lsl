@@ -121,6 +121,7 @@
             }
 
         } else if (cells == 24) {       // 24-cell, icositetrachoron
+            modelName = "Icositetrachoron (24-cell)";
             vertex = [
                 < 1.0, 0.0, 0.0, 0.0 >, < -1.0, 0.0, 0.0, 0.0 >,
                 < 0.0, 1.0, 0.0, 0.0 >, < 0.0, -1.0, 0.0, 0.0 >,
@@ -152,6 +153,17 @@
             edgeAxis = [ ];         // Use automatic assignment
         }
         autoColour();
+
+        /*  Uncomment to dump model definition for debugging
+        tawk("Vertices: " + llList2CSV(vertex));
+        tawk("Colour: " + llList2CSV(edgeAxis));
+        string pa = "Path: ";
+        for (i = 0; i < llGetListLength(edgePath); i++) {
+            integer ed = llList2Integer(edgePath, i);
+            pa += ((string) (ed / 100)) + ", " + ((string) (ed % 100)) + ", ";
+        }
+        tawk(pa);
+        */
     }
 
     //  autoColour  --  Assign edge colours automatically if not specified
@@ -355,6 +367,7 @@
                         llList2Json(JSON_ARRAY, edgePath),  // List of edges
                         llList2Json(JSON_ARRAY, edgeAxis)   // Colour indices of edges
                     ]), id);
+                vertex = edgePath = edgeAxis = [ ];
 
             //  LM_MO_STAT (302): Report status
 

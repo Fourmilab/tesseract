@@ -506,16 +506,16 @@ DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
         You can load this in any version of Tesseract.  The model it
         defines is identical to the built-in 8-cell object.
 
-    Configuration
-        Default configuration script, which simply displays a message
-        letting the user know the Demonstration script may be run by
-        touching the model anywhere.
-
     Commander
         Script which defines and displays a series of linked menus
         that provide access to many of the Tesseract commands and
         options without requiring use of chat commands.  Illustrates
         how to build an interactive menu system.
+
+    Configuration
+        Default configuration script, which simply displays a message
+        letting the user know the Demonstration script may be run by
+        touching the model anywhere.
 
     Demonstration
         This is the standard demonstration script that is run when the
@@ -543,6 +543,9 @@ DEMONSTRATION AND EXAMPLE SCRIPT NOTECARDS
         for 30 seconds.  At the end, it leaves the transformations in
         effect, so you can make the tumble indefinite by entering “Run
         on”.
+
+    YouTube
+        Outline script for the YouTube demonstration video.
 
 CONFIGURATION NOTECARD
 

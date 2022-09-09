@@ -21,7 +21,9 @@
     integer restrictAccess = 2;         // Access restriction: 0 none, 1 group, 2 owner
     integer echo = TRUE;                // Echo chat and script commands ?
 
-    integer siteIndex = 0;              // Index of last site deployed
+    string helpFileName = "Fourmilab Tesseract Edge Factory User Guide";
+
+    integer siteIndex = 0;              // Index of last edge deployed
 
     //  tawk  --  Send a message to the interacting user in chat
 
@@ -162,11 +164,7 @@
         //  Help                        Display help text
 
         } else if (abbrP(command, "he")) {
-            tawk("Edge factor commands:\n" +
-                 "  build n_edges\n" +
-                 "    n_edges         Number of edges to build\n" +
-                 "For additional information, see the Fourmilab Tesseract User Guide"
-                );
+            llGiveInventory(id, helpFileName);      // Give requester the User Guide notecard
 
         } else {
             tawk("Huh?  \"" + message + "\" undefined.  Chat /" +
