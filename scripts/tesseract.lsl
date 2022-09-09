@@ -97,7 +97,7 @@
     integer LM_MO_SELECT = 301;         // Get model definition
     integer LM_MO_STAT = 302;           // Print status
 //  integer LM_MO_DEFINITION = 303;     // Report model definition to requester
-    integer LM_MO_CUSTOM = 304;         // Define custom model
+//  integer LM_MO_CUSTOM = 304;         // Define custom model
 
     //  Projection messages
     integer LM_PR_RESET = 310;          // Reset projection module
@@ -113,7 +113,7 @@
     //  Export messages
     integer LM_EX_EXMODEL = 331;        // Export current model from Projections
     integer LM_EX_EXVIEW = 332;         // Export current view from Projections
-    integer LM_EX_DATA = 333;           // Export data from Projections
+//  integer LM_EX_DATA = 333;           // Export data from Projections
     integer LM_EX_STAT = 334;           // Print status
 
     //  tawk  --  Send a message to the interacting user in chat
@@ -592,10 +592,14 @@ tawk("Repeat: " + lastCommand);
                     perspective = abbrP(svalue, "pe");
                     sendProjSettings(1);
 
-                //  Set scale n
+                //  Set scale n[x]
 
                 } else if (abbrP(sparam, "sc")) {
-                    globalScale = (float) svalue;
+                    if (llGetSubString(svalue, -1, -1) == "x") {
+                        globalScale *= (float) llGetSubString(svalue, 0, -2);
+                    } else {
+                        globalScale = (float) svalue;
+                    }
                     sendProjSettings(1);
 
                 //  Set tick n

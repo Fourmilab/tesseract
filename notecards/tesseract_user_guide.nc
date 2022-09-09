@@ -443,13 +443,16 @@ and lower case.)
             three-dimensional objects are represented on the printed
             page and computer screens.
 
-        Set scale n
+        Set scale n[x]
             Set the scale factor used when projecting the 4D model to
             3D space.  The default scale factor is 1; adjust the scale
             to make the 3D projection whatever size you wish.  The
             scale factor only affects the length of the edges, not
             their diameter; adjust “Set diameter” appropriately to get
-            the effect you wish.
+            the effect you wish.  If the scale factor is followed by an
+            “x” (upper or lower case), it is multiplied by the current
+            scale factor.  For example, a specification of “0.5x” sets
+            the scale factor to half its current value.
 
         Set tick n
             Sets the time in seconds between animation steps when the

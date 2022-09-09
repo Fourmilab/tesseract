@@ -408,3 +408,11 @@ command was about to exceed the 1024 character limit for a chat message
 was incorrect and could result in truncation of the last line in the
 buffer.  I rewrote how it handles this case and it now seems to be
 behaving properly.  Line wrap continuations appear to be correct.
+
+Added the ability to specify a relative scale factor for the model by
+using a suffix of "x" (or "X") after the number.  This multiplies the
+number by the current scale factor.
+
+Modified the Commander View menu to replace the fixed scale buttons
+with "Smaller", "Scale 1", and "Bigger" buttons which apply scales of
+0.8x, 1, and 1.25x respectively.
