@@ -416,3 +416,20 @@ number by the current scale factor.
 Modified the Commander View menu to replace the fixed scale buttons
 with "Smaller", "Scale 1", and "Bigger" buttons which apply scales of
 0.8x, 1, and 1.25x respectively.
+
+2022 September 10
+
+Added an auto-scale facility to the Set scale command.  If you specify:
+    Set scale n[x] auto
+The scale will be set to a value based upon the extents of the model as
+projected into 3D space so that the model fits within a cube of n
+metres on a side, where as usual the size can be specified either
+absolutely or relatively with "x".  When a Set scale auto command is in
+effect, a change in the model, projection, or scale factor re-scales
+the model to the currently set size.  The scale is not reset on each
+update of the projection into 3D as that would cause a jarring change
+in size in each step as the model rotated.
+
+Revised the Demonstration and Commander scripts to use Scale ... auto
+mode, which eliminates the absolute scale references we needed before
+when changing models and projections.

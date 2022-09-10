@@ -2,7 +2,7 @@
 #               Demonstration script
 #
 rotate reset
-set scale 1
+set scale 1 auto
 set model 8
 @echo Fourmilab Tesseract shows three of the regular
 @echo four-dimensional polytopes.  The first is the
@@ -15,7 +15,6 @@ rotate reset
 @echo four-dimensional analogue of the tetrahedron
 @echo in three dimensions.
 set model 5
-set scale 1.5
 script pause 2
 rotate xw 5 animate
 run 10
@@ -24,13 +23,11 @@ rotate reset
 @echo four-dimensional analogue of the octahedron in
 @echo three dimensions.
 set model 16
-set scale 2
 script pause 2
 rotate xw 5 animate
 rotate zw 5 animate
 run 10
 rotate reset
-set scale 1
 
 set model 8
 rotate reset
@@ -86,7 +83,6 @@ rotate reset
 @echo tumbling hypercube we've just seen in perspective
 @echo shown in orthographic projection.
 set projection orthographic
-set scale 0.5
 rotate xw 5 animate
 rotate yw -5 animate
 rotate zw 5 animate
@@ -94,7 +90,6 @@ rotate xz 5 animate
 run 10
 rotate reset
 set projection perspective
-set scale 1
 
 @echo Avatars may sit on any of the edges of the model
 @echo and ride it as the model rotates in four dimensions.

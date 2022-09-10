@@ -16,6 +16,8 @@
     float timerTick = 0.05;             // Spin animation timer interval
 
     float globalScale = 1;              // Scale of projected object
+    integer autoScale = FALSE;          // Use auto-scaling ?
+    float modelScale;                   // Computed auto-scaling factor
     vector globalPos = ZERO_VECTOR;     // Offset of projected object from deployer
     vector edgeColour = < -1, 0, 0 >;   // Colour of wireframe edges
     float edgeAlpha = 1;                // Alpha of wireframe edges
@@ -46,6 +48,9 @@
 
     list projMatrix;                    // Current projection matrix
     list animMatrix;                    // Matrix applied on each animation step
+
+    vector extentMin;                   // Extent minima
+    vector extentMax;                   // Extent maxima
 
     //  Edge messages
     integer LM_ED_POS = 91;             // Set endpoint positions
@@ -362,9 +367,33 @@
         return llSqrt(dot4d(v, v));
     }
 
+    //  fmin  -- Minimum of two floats
+
+    float fmin(float a, float b) {
+        if (a < b) {
+            return a;
+        }
+        return b;
+    }
+
+    //  fmax  -- Maximum of two floats
+
+    float fmax(float a, float b) {
+        if (a > b) {
+            return a;
+        }
+        return b;
+    }
+
+    //  vmax  --  Maximum of three co-ordinates of a vector
+
+    float vmax(vector a) {
+        return fmax(fmax(a.x, a.y), a.z);
+    }
+
     //  updateProj  --  Update projection of 4D object to 3D model
 
-    updateProj() {
+    updateProj(integer upEdges) {
         list pvertex;
         integer i;
         integer j;
@@ -375,6 +404,9 @@
                             < 0, 0, 0, 0 >,             // To
                             < 0, 1, 0, 0 >,             // Up
                             < 0, 0, 1, 0 >);            // Over
+
+        extentMin = < 1e30, 1e30, 1e30 >;
+        extentMax = < -1e30, -1e30, -1e30 >;
         for (i = 0; i < nVertex; i++) {
 
             //  Position of transformed vertex in 4D space
@@ -387,39 +419,52 @@
                 viewAngle,          // View angle
                 projTo3d);          // Projection matrix 4D to 3D
             pvertex += < prv.x, prv.y, prv.z, 0 >;
+            extentMin = < fmin(extentMin.x, prv.x),
+                          fmin(extentMin.x, prv.y),
+                          fmin(extentMin.x, prv.z) >;
+            extentMax = < fmax(extentMax.x, prv.x),
+                          fmax(extentMax.x, prv.y),
+                          fmax(extentMax.x, prv.z) >;
         }
 
-        //  Draw wire frame representation of object
+        if (upEdges) {
 
-        for (i = 0; i < nEdges; i++) {
-            j = llList2Integer(edgePath, i);
-            k = j / 100;
-            j = j % 100;
-            if (i < nLinks) {
-                /*  You might think that sending link messages to
-                    each individual edge and having them separately
-                    move themselves is inefficient compared to
-                    batching everything up into one
-                    llSetLinkPrimitiveParamsFast() call using the
-                    PRIM_LINK_TARGET trick to address the links.
+            //  Draw wire frame representation of object
 
-                    But you'd be wrong.  That runs much slower and
-                    results in herky-jerky motion of the edges.  Making
-                    separate calls for each edge here is no better.
-                    My guess is that having the edges update themselves
-                    allows the updates to run in parallel while doing
-                    all the updates within the main script forces them
-                    to be executed serially.  */
+            float scale = globalScale;
+            if (autoScale) {
+                scale = modelScale;
+            }
+            for (i = 0; i < nEdges; i++) {
+                j = llList2Integer(edgePath, i);
+                k = j / 100;
+                j = j % 100;
+                if (i < nLinks) {
+                    /*  You might think that sending link messages to
+                        each individual edge and having them separately
+                        move themselves is inefficient compared to
+                        batching everything up into one
+                        llSetLinkPrimitiveParamsFast() call using the
+                        PRIM_LINK_TARGET trick to address the links.
 
-                llMessageLinked(llList2Integer(edgeLink, i), LM_ED_POS,
-                llList2Json(JSON_ARRAY, [ i + 1,
-                    (< matload(pvertex, j, 0),
-                       matload(pvertex, j, 1),
-                       matload(pvertex, j, 2) > * globalScale) + globalPos,
-                    (< matload(pvertex, k, 0),
-                       matload(pvertex, k, 1),
-                       matload(pvertex, k, 2) > * globalScale) + globalPos ]),
-                    whoDat);
+                        But you'd be wrong.  That runs much slower and
+                        results in herky-jerky motion of the edges.  Making
+                        separate calls for each edge here is no better.
+                        My guess is that having the edges update themselves
+                        allows the updates to run in parallel while doing
+                        all the updates within the main script forces them
+                        to be executed serially.  */
+
+                    llMessageLinked(llList2Integer(edgeLink, i), LM_ED_POS,
+                    llList2Json(JSON_ARRAY, [ i + 1,
+                        (< matload(pvertex, j, 0),
+                           matload(pvertex, j, 1),
+                           matload(pvertex, j, 2) > * scale) + globalPos,
+                        (< matload(pvertex, k, 0),
+                           matload(pvertex, k, 1),
+                           matload(pvertex, k, 2) > * scale) + globalPos ]),
+                        whoDat);
+                }
             }
         }
     }
@@ -508,7 +553,7 @@
             //  LM_PR_UPDPROJ (311): Update model to new projection
 
             } else if (num == LM_PR_UPDPROJ) {
-                updateProj();
+                updateProj(TRUE);
 
             //  LM_PR_UPDEDGE (312): Edge properties
 
@@ -545,18 +590,32 @@
 
             } else if (num == LM_PR_SETTINGS) {
                 list l = llJson2List(str);
-                globalScale = llList2Float(l, 0);
                 globalPos = (vector) llList2String(l, 1);
                 edgeColour = (vector) llList2String(l, 2);
                 edgeAlpha = llList2Float(l, 3);
                 edgeDiam = llList2Float(l, 4);
-                perspective = llList2Integer(l, 5);
                 viewAngle = llList2Float(l, 6);
                 viewFrom = (rotation) llList2String(l, 7);
                 spinAxis = (vector) llList2String(l, 8);
                 spinRate = llList2Float(l, 9);
                 hide = llList2Integer(l, 10);
                 timerTick = llList2Float(l, 11);
+
+                integer pe = llList2Integer(l, 5);
+                if (pe != perspective) {
+                    perspective = pe;
+                    autoScale = -2;     // Force recomputation of modelScale
+                    updateProj(FALSE);
+                }
+                float gs = llList2Float(l, 0);
+                integer as = llList2Integer(l, 12);
+                if ((as != autoScale) || (gs != globalScale)) {
+                    /*  If auto scale mode or numeric scale changed
+                        recompute automatic scale.  */
+                    modelScale = gs / vmax(extentMax - extentMin);
+                }
+                autoScale = as;
+                globalScale = gs;
                 updateHide();
 
             //  LM_PR_RUN (316): Start or stop animation
@@ -585,6 +644,7 @@
                 stat += "\n";
                 stat += "Model: " + modelName + "  Vertices: " + (string) nVertex +
                         "  Edges: " + (string) nEdges + "\n";
+                stat += "Extents: " + (string) extentMin + " - " + (string) extentMax + "\n";
                 integer mFree = llGetFreeMemory();
                 integer mUsed = llGetUsedMemory();
                 stat += "    Script memory.  Free: " + (string) mFree +
@@ -609,7 +669,12 @@
                 for (i = 0; i < nVertex; i++) {
                     vertex += (rotation) llList2String(vtxs, i);
                 }
-                updateProj();
+                updateProj(!autoScale);
+                if (autoScale) {
+                    //  Auto scale enabled: re-compute model scale
+                    modelScale = globalScale / vmax(extentMax - extentMin);
+                    updateProj(TRUE);
+                }
                 updateEdgeProps();
 
             //  LM_EX_EXMODEL (331): Export model as defined
@@ -645,7 +710,7 @@
         timer() {
             if (running) {
                 updateOrientation();
-                updateProj();
+                updateProj(TRUE);
                 if (((runEndTime > 0) && (llGetTime() > runEndTime)) ||
                     (runEndStep == 1)) {
                     running = FALSE;

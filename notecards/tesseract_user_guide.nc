@@ -443,7 +443,7 @@ and lower case.)
             three-dimensional objects are represented on the printed
             page and computer screens.
 
-        Set scale n[x]
+        Set scale n[x] [ auto ]
             Set the scale factor used when projecting the 4D model to
             3D space.  The default scale factor is 1; adjust the scale
             to make the 3D projection whatever size you wish.  The
@@ -452,7 +452,15 @@ and lower case.)
             the effect you wish.  If the scale factor is followed by an
             “x” (upper or lower case), it is multiplied by the current
             scale factor.  For example, a specification of “0.5x” sets
-            the scale factor to half its current value.
+            the scale factor to half its current value.  If "auto" is
+            specified, the model will be scaled so that its current
+            projection into 3D space will be such that it fits within a
+            cube of the given edge size in metres, which you can set
+            absolutely or relatively to the current value with the “x”
+            suffix.  When auto scale is in effect, re-scaling will
+            occur when the model is changed (Set model), another scale
+            factor is set with auto, or the projection (Set projection)
+            is changed.
 
         Set tick n
             Sets the time in seconds between animation steps when the

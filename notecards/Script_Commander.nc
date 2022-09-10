@@ -66,9 +66,9 @@ menu end
 menu begin View "Set viewing parameters"
 menu button Perspective "set projection perspective" "menu show View "
 menu button Parallel "set projection parallel" "menu show View "
-menu button "Smaller" "set scale 0.8x" "menu show View "
-menu button "Scale 1" "set scale 1" "menu show View "
-menu button "Bigger" "set scale 1.25x" "menu show View "
+menu button "Smaller" "set scale 0.8x auto" "menu show View "
+menu button "Scale 1" "set scale 1 auto" "menu show View "
+menu button "Bigger" "set scale 1.25x auto" "menu show View "
 menu button "Spin on" "spin 30"  "menu show View "
 menu button "Spin off" "spin 0"  "menu show View "
 menu button Reset "rotate reset" "set projection perspective" "set scale 1" "spin 0" "menu show View "
@@ -79,5 +79,6 @@ menu end
 menu show Main
 
 script set *
+set scale 1
 
 @echo Exiting Commander

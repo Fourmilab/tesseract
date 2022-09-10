@@ -48,6 +48,7 @@
     float timerTick = 0.05;             // Spin animation timer interval
 
     float globalScale = 1;              // Scale of projected object
+    integer autoScale = FALSE;          // Use auto-scaling ?
     vector globalPos = ZERO_VECTOR;     // Offset of projected object from deployer
     vector edgeColour = < -1, 0, 0 >;   // Colour of wireframe edges
     float edgeAlpha = 1;                // Alpha of wireframe edges
@@ -158,7 +159,7 @@
               edgeColour, edgeAlpha, edgeDiam,
               perspective, viewAngle, viewFrom,
               spinAxis, spinRate,
-              hide, timerTick
+              hide, timerTick, autoScale
             ]), whoDat);
         if (upd & 1) {
             llMessageLinked(LINK_THIS, LM_PR_UPDPROJ, "", whoDat);
@@ -592,7 +593,7 @@ tawk("Repeat: " + lastCommand);
                     perspective = abbrP(svalue, "pe");
                     sendProjSettings(1);
 
-                //  Set scale n[x]
+                //  Set scale n[x] [ auto ]
 
                 } else if (abbrP(sparam, "sc")) {
                     if (llGetSubString(svalue, -1, -1) == "x") {
@@ -600,6 +601,7 @@ tawk("Repeat: " + lastCommand);
                     } else {
                         globalScale = (float) svalue;
                     }
+                    autoScale = (argn > 3) && abbrP(llList2String(args, 3), "au");
                     sendProjSettings(1);
 
                 //  Set tick n
