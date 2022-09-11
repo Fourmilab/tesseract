@@ -433,3 +433,7 @@ in size in each step as the model rotated.
 Revised the Demonstration and Commander scripts to use Scale ... auto
 mode, which eliminates the absolute scale references we needed before
 when changing models and projections.
+
+2022 September 11
+
+Marketplace release of version 1.0.
